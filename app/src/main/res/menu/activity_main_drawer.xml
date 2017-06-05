@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@mipmap/home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@mipmap/profileicon"
+            android:title="Profile" />
+        <item
+            android:id="@+id/nav_trackorder"
+            android:icon="@mipmap/trackorder"
+            android:title="Track Order" />
+        <item
+            android:id="@+id/nav_pastorder"
+            android:icon="@mipmap/pastorder"
+            android:title="Past Order" />
+        <item
+            android:id="@+id/nav_notifications"
+            android:icon="@mipmap/notification"
+            android:title="Notifications" />
+        <item
+            android:id="@+id/nav_rateus"
+            android:icon="@mipmap/star"
+            android:title="Rate Us" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@mipmap/share"
+            android:title="Share" />
+        <item
+            android:id="@+id/nav_terms"
+            android:icon="@mipmap/terms_selected"
+            android:title="Terms &amp; Conditions" />
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@mipmap/ic_help_support"
+            android:title="Help &amp; Support" />
+    </group>
+
+</menu>
