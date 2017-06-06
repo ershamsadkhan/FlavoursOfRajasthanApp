@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
@@ -35,6 +37,8 @@ public class HomeFragment extends Fragment {
 
 
     public CustomListAdapter sta;
+    Alert alert;
+    CustomProgress customProgress;
 
     @Nullable
     @Override
@@ -54,9 +58,10 @@ public class HomeFragment extends Fragment {
         //ArrayList<ItemDto> listData = getListData();
 
         final ListView listView = (ListView) getView().findViewById(R.id.items_list);
+        alert = new Alert(getActivity());
+        customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
 
-
-
+        customProgress.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -65,20 +70,23 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<CategoryDto>> call, Response<ApiResponse<CategoryDto>> response) {
                 //int statusCode = response.code();
-                ArrayList<CategoryDto> res= response.body().ObjList;
+                ArrayList<CategoryDto> res = response.body().ObjList;
                 sta = new CustomListAdapter(getActivity(), res.get(0).itemDtoList);
                 listView.setAdapter(sta);
 
                 for (ItemDto s : res.get(0).itemDtoList) {
-                     //START LOADING IMAGES FOR EACH STUDENT
+                    //START LOADING IMAGES FOR EACH STUDENT
                     s.loadImage(sta);
                 }
+                customProgress.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<CategoryDto>> call, Throwable t) {
                 // Log error here since request failed
-                Log.e("APi Failure", t.toString());
+                alert.alertMessage("" + getString(R.string.server_error));
+                customProgress.dismiss();
+                Log.e("Api Failure", t.toString());
             }
         });
 
@@ -93,19 +101,4 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private ArrayList<ItemDto> getListData() {
-        ArrayList<ItemDto> listMockData = new ArrayList<ItemDto>();
-        String[] images = getResources().getStringArray(R.array.images_array);
-        String[] headlines = getResources().getStringArray(R.array.headline_array);
-
-        for (int i = 0; i < images.length; i++) {
-            ItemDto newsData = new ItemDto();
-            newsData.setUrl(images[i]);
-            newsData.setHeadline(headlines[i]);
-            newsData.setReporterName("Pankaj Gupta");
-            newsData.setDate("May 26, 2013, 13:35");
-            listMockData.add(newsData);
-        }
-        return listMockData;
-    }
 }

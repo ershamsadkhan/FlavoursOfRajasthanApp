@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             fragment = new HomeFragment();
         } else if (id == R.id.nav_profile) {
-            fragment = new ProfileFragment();
+            fragment = new LoginFragment();
         } else if (id == R.id.nav_pastorder) {
             fragment = new PastOrderFragment();
         } else if (id == R.id.nav_trackorder) {
