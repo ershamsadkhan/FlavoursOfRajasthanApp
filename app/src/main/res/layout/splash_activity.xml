@@ -21,7 +21,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="150dp"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@drawable/ic_launcher_220" />
 
 
 </RelativeLayout>
