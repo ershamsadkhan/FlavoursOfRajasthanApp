@@ -74,6 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:passwordToggleEnabled="true"
+            android:id="@+id/showPwd"
             android:theme="@style/RobotoEditTextStyle">
             <EditText android:id="@+id/input_password"
                 android:layout_width="match_parent"
@@ -93,5 +94,29 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:theme="@style/RedButtonLightTheme"/>
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_register"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"
+            android:text="Save"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:theme="@style/RedButtonLightTheme"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/btn_logout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"
+            android:text="Log Out"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:theme="@style/RedButtonLightTheme"/>
+
     </LinearLayout>
+
+
 </ScrollView>

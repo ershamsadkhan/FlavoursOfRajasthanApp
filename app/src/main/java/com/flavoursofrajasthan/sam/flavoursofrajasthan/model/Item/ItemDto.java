@@ -11,19 +11,16 @@ import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration.Setti
 import org.apache.http.HttpStatus;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static android.R.attr.name;
 
-public class ItemDto {
+public class ItemDto  {
 
-    private String headline;
-    private String reporterName;
-    private String date;
-    private String url;
-    private Bitmap image;
-    private CustomListAdapter sta;
+    public Bitmap image;
+    public CustomListAdapter sta;
     public Bitmap getImage() {
         return image;
     }
@@ -51,43 +48,6 @@ public class ItemDto {
     public long FullPrice;
     public String ImageUrl;
 
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getHeadline() {
-        return headline;
-    }
-
-    public void setHeadline(String headline) {
-        this.headline = headline;
-    }
-
-    public String getReporterName() {
-        return reporterName;
-    }
-
-    public void setReporterName(String reporterName) {
-        this.reporterName = reporterName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    @Override
-    public String toString() {
-        return "[ headline=" + headline + ", reporter Name=" + reporterName + " , date=" + date + "]";
-    }
 
     // ASYNC TASK TO AVOID CHOKING UP UI THREAD
     private class ImageLoadTask extends AsyncTask<String, String, Bitmap> {

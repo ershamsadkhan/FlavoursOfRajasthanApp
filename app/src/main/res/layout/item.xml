@@ -28,7 +28,7 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/item_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/thumbImage"
@@ -38,7 +38,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/reporter"
+            android:id="@+id/item_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
@@ -71,7 +71,7 @@
                     android:textSize="15dp" />
 
                 <TextView
-                    android:id="@+id/date"
+                    android:id="@+id/rate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/reporter"
@@ -92,6 +92,8 @@
                     android:layout_height="40dp"
                     android:text="ORDER"
                     android:textSize="12dp"
+                    android:focusable="false"
+                    android:id="@+id/btn_item_selected"
                     android:theme="@style/RedButtonLightTheme"/>
             </LinearLayout>
         </LinearLayout>

@@ -2,6 +2,8 @@ package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
 import android.content.DialogInterface;
 import android.graphics.Movie;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,17 +47,21 @@ import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
     Button saveBtn;
+    Button registerBtn;
+    Button logoutBtn;
     EditText userNameEditText;
     EditText userPwdEditText;
     EditText primaryAddressEditText;
     EditText emailAddressEditText;
     EditText phoneNumberEditText;
+    TextInputLayout txtInputLayout;
 
     TextStorage txtStorage;
     UserDto userDto;
     ApiRequest<UserDto> apiRequest;
     Alert alert;
     CustomToast customToast;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,11 +77,20 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
 
-        alert=new Alert(getActivity());
+        FloatingActionButton floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
+        if (floatingActionButton != null) {
+            floatingActionButton.hide();
+        }
+
+        alert = new Alert(getActivity());
         txtStorage = new TextStorage(getActivity());
-        customToast=new CustomToast(getActivity(),getActivity(),getLayoutInflater(savedInstanceState));
+        customToast = new CustomToast(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
 
         saveBtn = (Button) getActivity().findViewById(R.id.btn_save);
+        registerBtn = (Button) getActivity().findViewById(R.id.btn_register);
+        logoutBtn = (Button) getActivity().findViewById(R.id.btn_logout);
+        txtInputLayout=(TextInputLayout)getActivity().findViewById(R.id.showPwd);
+
         userNameEditText = (EditText) getActivity().findViewById((R.id.input_name));
         userPwdEditText = (EditText) getActivity().findViewById((R.id.input_password));
         primaryAddressEditText = (EditText) getActivity().findViewById((R.id.input_primary_address));
@@ -91,16 +106,25 @@ public class ProfileFragment extends Fragment {
         userDto.UserName = txtStorage.getUserName();
         userDto.UserPwd = txtStorage.getUserPwd();
 
+        //if user is already present then fetch details and show it on the screen
+        //else ask him to sign up
         if (userDto.Userid > 0 && userDto.UserName != "" && userDto.UserPwd != "") {
-
+            saveBtn.setVisibility(View.GONE);
+            registerBtn.setVisibility(View.GONE);
+            logoutBtn.setVisibility(View.VISIBLE);
+            userPwdEditText.setVisibility(View.GONE);
+            txtInputLayout.setVisibility(View.GONE);
+            disableFields();
+            LogInUser();
         } else {
-
+            saveBtn.setVisibility(View.VISIBLE);
+            registerBtn.setVisibility(View.GONE);
+            logoutBtn.setVisibility(View.GONE);
         }
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "btnCLicked", Toast.LENGTH_SHORT).show();
                 userDto.UserName = userNameEditText.getText().toString();
                 userDto.UserPwd = userPwdEditText.getText().toString();
                 userDto.PrimaryAddress = primaryAddressEditText.getText().toString();
@@ -110,6 +134,33 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customToast.show("Successfully Logged Out!");
+                txtStorage.storeUserId("0");
+                txtStorage.storeUserPwd("");
+                txtStorage.storeUserName("");
+                Fragment fragment = new LoginFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
+            }
+        });
+
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userDto.UserName = userNameEditText.getText().toString();
+                userDto.UserPwd = userPwdEditText.getText().toString();
+                userDto.PrimaryAddress = primaryAddressEditText.getText().toString();
+                userDto.UserEmailAddress = emailAddressEditText.getText().toString();
+                userDto.UserPhoneNumber = phoneNumberEditText.getText().toString();
+                apiRequest.Obj=userDto;
+                UpdateUser();
+            }
+        });
 
     }
 
@@ -128,11 +179,76 @@ public class ProfileFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.edit) {
-
+            if(saveBtn.getVisibility()==View.GONE) {
+                enableFields();
+                saveBtn.setVisibility(View.GONE);
+                registerBtn.setVisibility(View.VISIBLE);
+                logoutBtn.setVisibility(View.GONE);
+            }
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void UpdateUser() {
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ApiResponse<UserDto>> call = apiService.UpdateUser(apiRequest);
+        call.enqueue(new Callback<ApiResponse<UserDto>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserDto>> call, Response<ApiResponse<UserDto>> response) {
+                //int statusCode = response.code();
+                if (response.body().Status == false) {
+                    alert.alertMessage(response.body().ErrMsg);
+                } else {
+                    customToast.show("Successfully Updated.");
+                    saveBtn.setVisibility(View.GONE);
+                    registerBtn.setVisibility(View.GONE);
+                    logoutBtn.setVisibility(View.VISIBLE);
+                    disableFields();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserDto>> call, Throwable t) {
+                // Log error here since request failed
+                alert.alertMessage("" + getString(R.string.server_error));
+                Log.e("Api Failure", t.toString());
+            }
+        });
+    }
+
+    public void LogInUser() {
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ApiResponse<UserDto>> call = apiService.logIn(apiRequest);
+        call.enqueue(new Callback<ApiResponse<UserDto>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserDto>> call, Response<ApiResponse<UserDto>> response) {
+                //int statusCode = response.code();
+                if (response.body().Status == false) {
+                    alert.alertMessage(response.body().ErrMsg);
+                } else {
+                    userDto = response.body().ObjList.get(0);
+
+                    userNameEditText.setText(userDto.UserName);
+                    userPwdEditText.setText(userDto.UserPwd);
+                    primaryAddressEditText.setText(userDto.PrimaryAddress);
+                    emailAddressEditText.setText(userDto.UserEmailAddress);
+                    phoneNumberEditText.setText(userDto.UserPhoneNumber);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserDto>> call, Throwable t) {
+                // Log error here since request failed
+                alert.alertMessage("" + getString(R.string.server_error));
+                Log.e("Api Failure", t.toString());
+            }
+        });
     }
 
     public void SignUpUser() {
@@ -146,8 +262,7 @@ public class ProfileFragment extends Fragment {
                 //int statusCode = response.code();
                 if (response.body().Status == false) {
                     alert.alertMessage(response.body().ErrMsg);
-                }
-                else{
+                } else {
                     customToast.show("Successfully Signed Up.");
                     Fragment fragment = new LoginFragment();
                     FragmentManager fragmentManager = getFragmentManager();
@@ -160,10 +275,25 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiResponse<UserDto>> call, Throwable t) {
                 // Log error here since request failed
-                alert.alertMessage(""+getString(R.string.server_error));
+                alert.alertMessage("" + getString(R.string.server_error));
                 Log.e("Api Failure", t.toString());
             }
         });
     }
 
+    public void enableFields(){
+        userNameEditText.setEnabled(false);
+        userPwdEditText.setEnabled(true);
+        primaryAddressEditText.setEnabled(true);
+        emailAddressEditText.setEnabled(true);
+        phoneNumberEditText.setEnabled(true);
+    }
+
+    public void disableFields(){
+        userNameEditText.setEnabled(false);
+        userPwdEditText.setEnabled(false);
+        primaryAddressEditText.setEnabled(false);
+        emailAddressEditText.setEnabled(false);
+        phoneNumberEditText.setEnabled(false);
+    }
 }

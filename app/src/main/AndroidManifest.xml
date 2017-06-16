@@ -25,7 +25,7 @@
         <activity
             android:name="com.flavoursofrajasthan.sam.flavoursofrajasthan.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">>
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

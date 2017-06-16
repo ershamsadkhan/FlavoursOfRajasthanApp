@@ -5,5 +5,5 @@ package com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration;
  */
 
 public class Settings {
-    public static  String BaseApiUrl="http://192.168.0.100:49601/";
+    public static  String BaseApiUrl="http://sample.jitangupta.com/";
 }

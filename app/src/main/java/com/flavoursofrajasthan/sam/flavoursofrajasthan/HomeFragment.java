@@ -1,14 +1,19 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
 import android.graphics.Movie;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,12 +44,19 @@ public class HomeFragment extends Fragment {
     public CustomListAdapter sta;
     Alert alert;
     CustomProgress customProgress;
+    Button btnItemClick;
+
+    FloatingActionButton floatingActionButton;
+    FragmentManager fragmentManager;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
+        if (container != null) {
+            container.removeAllViews();
+        }
         return inflater.inflate(R.layout.content_main, container, false);
     }
 
@@ -55,11 +67,64 @@ public class HomeFragment extends Fragment {
         //you can set the title for your toolbar here for different fragments different titles
         //getActivity().setTitle("Menu 1");
 
-        //ArrayList<ItemDto> listData = getListData();
+        fragmentManager= getActivity().getSupportFragmentManager();
+        int count = fragmentManager.getBackStackEntryCount();
+        Log.e("count", ""+count);
+        for(int i = 0; i < count; ++i) {
+            fragmentManager.popBackStack();
+        }
 
         final ListView listView = (ListView) getView().findViewById(R.id.items_list);
+        btnItemClick = (Button) getView().findViewById(R.id.btn_item_selected);
+
         alert = new Alert(getActivity());
         customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
+
+        floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                ItemDto newsData = (ItemDto) listView.getItemAtPosition(position);
+
+                Fragment fragment = new OrderFragment();
+
+                fragmentManager.beginTransaction()
+                        .replace(((ViewGroup)getView().getParent()).getId(), fragment)
+                        .addToBackStack("tag")
+                        .commit();
+
+                Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (mLastFirstVisibleItem < firstVisibleItem) {
+                    if (floatingActionButton != null) {
+                        floatingActionButton.hide();
+                    }
+                }
+                if (mLastFirstVisibleItem > firstVisibleItem) {
+                    if (floatingActionButton != null) {
+                        floatingActionButton.show();
+                    }
+                }
+                mLastFirstVisibleItem = firstVisibleItem;
+            }
+        });
 
         customProgress.show();
         ApiInterface apiService =
@@ -70,15 +135,26 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<CategoryDto>> call, Response<ApiResponse<CategoryDto>> response) {
                 //int statusCode = response.code();
-                ArrayList<CategoryDto> res = response.body().ObjList;
-                sta = new CustomListAdapter(getActivity(), res.get(0).itemDtoList);
-                listView.setAdapter(sta);
+                if(response.body()!=null) {
+                    if (response.body().Status == true) {
+                        ArrayList<CategoryDto> res = response.body().ObjList;
+                        sta = new CustomListAdapter(getActivity(), res.get(0).itemDtoList);
+                        listView.setAdapter(sta);
 
-                for (ItemDto s : res.get(0).itemDtoList) {
-                    //START LOADING IMAGES FOR EACH STUDENT
-                    s.loadImage(sta);
+
+                        for (ItemDto s : res.get(0).itemDtoList) {
+                            //START LOADING IMAGES FOR EACH STUDENT
+                            s.loadImage(sta);
+                        }
+                        customProgress.dismiss();
+                    } else {
+                        customProgress.dismiss();
+                        alert.alertMessage(response.body().ErrMsg);
+                    }
+                }else{
+                    alert.alertMessage("" + "server error");
+                    customProgress.dismiss();
                 }
-                customProgress.dismiss();
             }
 
             @Override
@@ -90,15 +166,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                ItemDto newsData = (ItemDto) listView.getItemAtPosition(position);
-                Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
 }

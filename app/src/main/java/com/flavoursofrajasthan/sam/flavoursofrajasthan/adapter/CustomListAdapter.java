@@ -1,16 +1,27 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter;
 
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.flavoursofrajasthan.sam.flavoursofrajasthan.ImageDownloaderTask;
+import java.io.Serializable;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.OrderFragment;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.R;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDtoForOrder;
 
 import java.util.ArrayList;
 
@@ -18,9 +29,14 @@ public class CustomListAdapter extends BaseAdapter {
     private ArrayList<ItemDto> listData;
     private LayoutInflater layoutInflater;
 
+    FragmentManager fragmentManager;
+
+    Context context;
+    ItemDtoForOrder itemDtoForOrder;
     public CustomListAdapter(Context context, ArrayList<ItemDto> listData) {
         this.listData = listData;
         layoutInflater = LayoutInflater.from(context);
+        this.context=context;
     }
 
     @Override
@@ -43,10 +59,13 @@ public class CustomListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.item, null);
             holder = new ViewHolder();
-            holder.headlineView = (TextView) convertView.findViewById(R.id.title);
-            holder.reporterNameView = (TextView) convertView.findViewById(R.id.reporter);
-            holder.reportedDateView = (TextView) convertView.findViewById(R.id.date);
+            holder.itemHeader = (TextView) convertView.findViewById(R.id.item_header);
+            holder.itemDescription = (TextView) convertView.findViewById(R.id.item_description);
+            holder.itemRate = (TextView) convertView.findViewById(R.id.rate);
             holder.imageView = (ImageView) convertView.findViewById(R.id.thumbImage);
+            holder.btnOrder = (Button) convertView.findViewById(R.id.btn_item_selected);
+            holder.btnOrder.setOnClickListener(myButtonClickListener);
+
             convertView.setTag(holder);
 
         } else {
@@ -54,9 +73,9 @@ public class CustomListAdapter extends BaseAdapter {
         }
 
         ItemDto newsItem = listData.get(position);
-        holder.headlineView.setText(newsItem.ItemHeader);
-        holder.reporterNameView.setText(newsItem.ItemDescription);
-        holder.reportedDateView.setText(""+newsItem.FullPrice);
+        holder.itemHeader.setText(newsItem.ItemHeader);
+        holder.itemDescription.setText(newsItem.ItemDescription);
+        holder.itemRate.setText("" + newsItem.FullPrice);
 
         if (newsItem.getImage() != null) {
             holder.imageView.setImageBitmap(newsItem.getImage());
@@ -65,17 +84,59 @@ public class CustomListAdapter extends BaseAdapter {
             holder.imageView.setImageResource(R.drawable.dummy_product_image);
         }
 
-        /*if (holder.imageView != null) {
-            new ImageDownloaderTask(holder.imageView).execute(newsItem.getUrl());
-        }*/
-
         return convertView;
     }
 
+
+    private View.OnClickListener myButtonClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            View parentRow = (View) v.getParent();
+            LinearLayout l1=(LinearLayout)parentRow.getParent();
+            LinearLayout l2=(LinearLayout)l1.getParent();
+            LinearLayout l3=(LinearLayout)l2.getParent();
+            ListView listView = (ListView) l3.getParent();
+            final int position = listView.getPositionForView(parentRow);
+
+
+            ItemDto selectedItem = (ItemDto) listView.getItemAtPosition(position);
+
+            itemDtoForOrder=new ItemDtoForOrder();
+            itemDtoForOrder.image=selectedItem.getImage();
+            itemDtoForOrder.Categoryid=selectedItem.Categoryid;
+            itemDtoForOrder.FullPrice=selectedItem.FullPrice;
+            itemDtoForOrder.HalfPrice=selectedItem.HalfPrice;
+            itemDtoForOrder.QuaterPrice=selectedItem.QuaterPrice;
+            itemDtoForOrder.ItemDescription=selectedItem.ItemDescription;
+            itemDtoForOrder.ItemHeader=selectedItem.ItemHeader;
+            itemDtoForOrder.Itemid=selectedItem.Itemid;
+
+            Bundle b=new Bundle();
+            b.putSerializable("ItemDto",itemDtoForOrder);
+            Fragment fragment=new OrderFragment();
+            fragment.setArguments(b);
+
+            fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
+
+            int count = fragmentManager.getBackStackEntryCount();
+            for(int i = 0; i < count; ++i) {
+                fragmentManager.popBackStack();
+            }
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent,fragment)
+                    .addToBackStack( "tag" ).commit();
+
+
+        }
+    };
+
     static class ViewHolder {
-        TextView headlineView;
-        TextView reporterNameView;
-        TextView reportedDateView;
+        TextView itemHeader;
+        TextView itemDescription;
+        TextView itemRate;
         ImageView imageView;
+        Button btnOrder;
     }
 }

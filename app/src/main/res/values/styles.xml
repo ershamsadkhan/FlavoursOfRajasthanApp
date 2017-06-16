@@ -11,6 +11,7 @@
         <item name="android:toolbarStyle">@style/RobotoButtonStyle</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="actionButtonStyle">@style/myActionButtonStyle</item>
+        <item name="android:radioButtonStyle">@style/RobotoRadioStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -48,8 +49,15 @@
         <item name="android:textColorSecondary">#ffffff</item>
     </style>
 
+    <style name="RobotoRadioStyle" parent="android:Widget.CompoundButton.RadioButton">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="colorControlActivated">#000000</item>
+        <item name="colorControlHighlight">#000000</item>
+    </style>
+
     <style name="RedButtonLightTheme" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorAccent">@android:color/holo_red_light</item>
+        <item name="colorAccent">@android:color/holo_orange_dark</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="NavigationDrawerStyle">
@@ -70,5 +78,24 @@
         <item name="android:maxWidth">32dp</item>
         <item name="android:width">32dp</item>
         <item name="android:textColorSecondary">#ffffff</item>
+    </style>
+
+    <style name="spinner_style">
+        <item name="android:background">@drawable/gradient_spinner</item>
+        <item name="android:paddingLeft">3dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+    </style>
+
+    <style name="borderes_button_style">
+        <item name="android:background">@drawable/bordered_button</item>
+        <item name="android:paddingLeft">3dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:textColor">@android:color/holo_orange_dark</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

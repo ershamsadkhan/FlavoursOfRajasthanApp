@@ -20,4 +20,7 @@ public interface ApiInterface {
     @POST("api/User/LogIn")
     Call<ApiResponse<UserDto>> logIn(@Body ApiRequest<UserDto> request);
 
+    @POST("api/User/UpdateDetails")
+    Call<ApiResponse<UserDto>> UpdateUser(@Body ApiRequest<UserDto> request);
+
 }

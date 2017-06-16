@@ -22,6 +22,10 @@ import android.widget.LinearLayout;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    Fragment fragment = null;
+    FragmentManager fragmentManager;
+    public FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +35,17 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fragmentManager = getSupportFragmentManager();
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                fragment = new CartFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .addToBackStack("tag")
+                        .commit();
             }
         });
 
@@ -72,6 +81,9 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public FloatingActionButton getFloatingActionButton() {
+        return fab;
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -80,11 +92,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.edit) {
-            return true;
-        }
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -92,15 +101,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment fragment = null;
-        FragmentManager fragmentManager = getSupportFragmentManager();
+
+
         if (id == R.id.nav_home) {
+            if (fab != null) {
+                fab.show();
+            }
             fragment = new HomeFragment();
         } else if (id == R.id.nav_profile) {
             fragment = new LoginFragment();
         } else if (id == R.id.nav_pastorder) {
+            if (fab != null) {
+                fab.show();
+            }
             fragment = new PastOrderFragment();
         } else if (id == R.id.nav_trackorder) {
+            if (fab != null) {
+                fab.show();
+            }
             fragment = new TrackOrderFragment();
         }
         if (fragment != null) {
