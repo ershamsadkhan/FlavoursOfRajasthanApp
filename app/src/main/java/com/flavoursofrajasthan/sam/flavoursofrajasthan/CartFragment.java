@@ -11,6 +11,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDtoForOrder;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderDto;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderLineItemDto;
+import com.google.gson.Gson;
+
 /**
  * Created by SAM on 6/4/2017.
  */
@@ -19,6 +28,16 @@ public class CartFragment extends Fragment {
 
     LinearLayout linearLayout;
     View rootView;
+    ItemDto item;
+    ItemDtoForOrder itemDtoForOrder;
+    OrderDto orderDto;
+    OrderLineItemDto orderLineItemDto;
+
+    TextStorage txtStorage;
+    Gson gson;
+    Alert alert;
+    CustomProgress customProgress;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,14 +58,28 @@ public class CartFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
+        alert = new Alert(getActivity());
+        customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
+
         FloatingActionButton floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
             floatingActionButton.hide();
         }
+
+        txtStorage = new TextStorage(getActivity());
+        gson=new Gson();
+
         getActivity().setTitle("Menu 1");
     }
 
     public void loadCartView(){
+        String tempOrderDto = txtStorage.getCartData();
+        if (tempOrderDto == "") {
+            alert.alertMessage("No Items present in the cart");
+        } else {
+            orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
+        }
+
         for(int i=0;i<3;i++) {
             View hiddenInfo = getActivity().getLayoutInflater().inflate(R.layout.cart_item, linearLayout, false);
             Button demobtn = (Button) hiddenInfo.findViewById(R.id.btn_edit);

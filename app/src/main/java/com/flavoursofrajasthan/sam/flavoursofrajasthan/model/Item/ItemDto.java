@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.ImageCache;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration.Settings;
 
@@ -24,6 +25,7 @@ public class ItemDto  {
     public Bitmap getImage() {
         return image;
     }
+    public ImageCache imageCache;
 
     public CustomListAdapter getAdapter() {
         return sta;
@@ -35,8 +37,16 @@ public class ItemDto  {
     public void loadImage(CustomListAdapter sta) {
         // HOLD A REFERENCE TO THE ADAPTER
         this.sta = sta;
+        imageCache=ImageCache.getInstance();
+
         if (ImageUrl != null && !ImageUrl.equals("")) {
-            new ImageLoadTask().execute(ImageUrl);
+            image=imageCache.getCacheFile(ImageUrl);
+            if(image!=null){
+                sta.notifyDataSetChanged();
+            }
+            else {
+                new ImageLoadTask().execute(ImageUrl);
+            }
         }
     }
     public long Itemid;
@@ -79,6 +89,7 @@ public class ItemDto  {
                 image = ret;
                 if (sta != null) {
                     // WHEN IMAGE IS LOADED NOTIFY THE ADAPTER
+                    imageCache.saveCacheFile(ImageUrl,image);
                     sta.notifyDataSetChanged();
                 }
             } else {
