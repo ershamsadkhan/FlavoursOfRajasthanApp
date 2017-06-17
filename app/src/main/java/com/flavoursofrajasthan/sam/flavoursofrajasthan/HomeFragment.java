@@ -81,7 +81,9 @@ public class HomeFragment extends Fragment {
         customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
 
         floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
-
+        if (floatingActionButton != null) {
+            floatingActionButton.show();
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

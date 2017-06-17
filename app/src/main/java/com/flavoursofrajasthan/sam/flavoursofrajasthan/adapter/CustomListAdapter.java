@@ -111,6 +111,7 @@ public class CustomListAdapter extends BaseAdapter {
             itemDtoForOrder.ItemDescription=selectedItem.ItemDescription;
             itemDtoForOrder.ItemHeader=selectedItem.ItemHeader;
             itemDtoForOrder.Itemid=selectedItem.Itemid;
+            itemDtoForOrder.ImageUrl=selectedItem.ImageUrl;
 
             Bundle b=new Bundle();
             b.putSerializable("ItemDto",itemDtoForOrder);

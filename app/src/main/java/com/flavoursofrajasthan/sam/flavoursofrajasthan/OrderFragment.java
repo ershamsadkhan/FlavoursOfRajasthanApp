@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class OrderFragment extends Fragment {
     TextView halfPrice;
     TextView fullPrice;
     Button btnAddToCart;
+    Button btnCheckOut;
     private RadioGroup radioGroup;
     private RadioButton radioButtonPrice;
     Spinner stySpinner;
@@ -68,7 +70,7 @@ public class OrderFragment extends Fragment {
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Menu 1");
         txtStorage = new TextStorage(getActivity());
-        gson=new Gson();
+        gson = new Gson();
 
         itemImage = (ImageView) getActivity().findViewById(R.id.thumbImage);
         itemHeader = (TextView) getActivity().findViewById(R.id.txt_header);
@@ -78,6 +80,7 @@ public class OrderFragment extends Fragment {
         fullPrice = (TextView) getActivity().findViewById(R.id.txt_fullPrice);
         txtTotal = (TextView) getActivity().findViewById(R.id.txt_total);
         btnAddToCart = (Button) getActivity().findViewById(R.id.btn_addtocart);
+        btnCheckOut = (Button) getActivity().findViewById(R.id.btn_placeorder);
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.radioGroup);
         stySpinner = (Spinner) getActivity().findViewById(R.id.spinner1);
 
@@ -95,6 +98,7 @@ public class OrderFragment extends Fragment {
         item.FullPrice = itemDtoForOrder.FullPrice;
         item.HalfPrice = itemDtoForOrder.HalfPrice;
         item.QuaterPrice = itemDtoForOrder.QuaterPrice;
+        item.ImageUrl = itemDtoForOrder.ImageUrl;
 
         itemImage.setImageBitmap(itemDtoForOrder.getImage());
         itemHeader.setText(itemDtoForOrder.ItemHeader);
@@ -103,6 +107,7 @@ public class OrderFragment extends Fragment {
         halfPrice.setText(Long.toString(itemDtoForOrder.HalfPrice));
         fullPrice.setText(Long.toString(itemDtoForOrder.FullPrice));
         orderLineItemDto.Price = Integer.parseInt(fullPrice.getText().toString());
+        orderLineItemDto.PriceType = 3;
 
         FloatingActionButton floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
@@ -112,37 +117,26 @@ public class OrderFragment extends Fragment {
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                orderLineItemDto.item = item;
-                orderLineItemDto.ItemId = item.Itemid;
-                //orderLineItemDto.Quantity=Integer.parseInt(quantityedt.getText().toString());
-
-                /*int selectedId = radioGroup.getCheckedRadioButtonId();
-                radioButtonPrice = (RadioButton)getActivity().findViewById(selectedId);*/
-
-               /* Toast.makeText(getActivity(),
-                        radioButtonPrice.getText(), Toast.LENGTH_SHORT).show();*/
-
-                String tempOrderDto = txtStorage.getCartData();
-                if (tempOrderDto == "") {
-                    orderDto = new OrderDto();
-                } else {
-                    orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
-                }
-
-                if (orderDto.OrderLineItemList == null) {
-                    orderDto.OrderLineItemList = new ArrayList<OrderLineItemDto>();
-                }
-
-
-                if (ValidateOrder()) {
-                    orderDto.OrderLineItemList.add(orderLineItemDto);
-                    AddToCart();
-                }
+                AddToCart();
+                Fragment fragment = new HomeFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
             }
         });
 
+        btnCheckOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddToCart();
+                Fragment fragment = new CartFragment();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
+            }
+        });
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
@@ -198,8 +192,39 @@ public class OrderFragment extends Fragment {
     }
 
     public void AddToCart() {
+        orderLineItemDto.item = item;
+        orderLineItemDto.ItemId = item.Itemid;
+        orderLineItemDto.ImageUrl = item.ImageUrl;
+        orderLineItemDto.ItemHeader = item.ItemHeader;
+
+        //orderLineItemDto.Quantity=Integer.parseInt(quantityedt.getText().toString());
+
+                /*int selectedId = radioGroup.getCheckedRadioButtonId();
+                radioButtonPrice = (RadioButton)getActivity().findViewById(selectedId);*/
+
+               /* Toast.makeText(getActivity(),
+                        radioButtonPrice.getText(), Toast.LENGTH_SHORT).show();*/
+
+        String tempOrderDto = txtStorage.getCartData();
+        if (tempOrderDto == "") {
+            orderDto = new OrderDto();
+        } else {
+            orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
+        }
+
+        if (orderDto.OrderLineItemList == null) {
+            orderDto.OrderLineItemList = new ArrayList<OrderLineItemDto>();
+        }
+
+
+        if (ValidateOrder()) {
+            orderDto.OrderLineItemList.add(orderLineItemDto);
+        } else {
+            return;
+        }
         txtStorage.storeCartData(gson.toJson(orderDto));
-        Toast.makeText(getActivity(),txtStorage.getCartData(), Toast.LENGTH_SHORT).show();
+
+        //Toast.makeText(getActivity(),txtStorage.getCartData(), Toast.LENGTH_SHORT).show();
     }
 
     public void UpdatePrice() {

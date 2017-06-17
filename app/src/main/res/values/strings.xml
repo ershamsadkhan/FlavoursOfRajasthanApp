@@ -22,4 +22,17 @@
         <item>9</item>
         <item>10</item>
     </string-array>
+
+    <string-array name="cities_array">
+        <item>Lucknow</item>
+        <item>Mumbai</item>
+        <item>Banglore</item>
+        <item>Delhi</item>
+    </string-array>
+    <string-array name="cities_array_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
 </resources>

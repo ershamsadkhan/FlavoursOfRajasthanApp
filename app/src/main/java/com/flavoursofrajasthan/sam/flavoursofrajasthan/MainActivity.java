@@ -19,6 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
+import com.google.gson.Gson;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -26,11 +30,17 @@ public class MainActivity extends AppCompatActivity
     FragmentManager fragmentManager;
     public FloatingActionButton fab;
 
+    TextStorage txtStorage;
+    Alert alert;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        alert = new Alert(this);
+        txtStorage = new TextStorage(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -41,11 +51,17 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragment = new CartFragment();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.flContent, fragment)
-                        .addToBackStack("tag")
-                        .commit();
+                String tempOrderDto = txtStorage.getCartData();
+                if (tempOrderDto == "") {
+                    alert.alertMessage("No Items present in the cart");
+                }
+                else {
+                    fragment = new CartFragment();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .addToBackStack("tag")
+                            .commit();
+                }
             }
         });
 
