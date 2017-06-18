@@ -26,6 +26,7 @@ import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDtoForOrder;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderLineItemDto;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.User.UserDto;
 import com.google.gson.Gson;
 
 /**
@@ -40,6 +41,7 @@ public class CartFragment extends Fragment {
     ItemDtoForOrder itemDtoForOrder;
     OrderDto orderDto;
     OrderLineItemDto orderLineItemDto;
+    UserDto userDto;
 
     TextStorage txtStorage;
     Gson gson;
@@ -56,6 +58,9 @@ public class CartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
+        if (container != null) {
+            container.removeAllViews();
+        }
         rootView = inflater.inflate(R.layout.cart_main, container, false);
         return rootView;
     }
@@ -88,11 +93,25 @@ public class CartFragment extends Fragment {
         btnBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = new ConfirmOrderFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.flContent, fragment)
-                        .commit();
+                userDto=new UserDto();
+                String UserId = txtStorage.getUserId();
+                userDto.Userid = Long.parseLong(UserId);
+                userDto.UserName = txtStorage.getUserName();
+                userDto.UserPwd = txtStorage.getUserPwd();
+                if (userDto.Userid > 0 && userDto.UserName != "" && userDto.UserPwd != "") {
+                    Fragment fragment = new ConfirmOrderFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .commit();
+                }
+                else{
+                    Fragment fragment = new LoginFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .commit();
+                }
             }
         });
 

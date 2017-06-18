@@ -11,12 +11,20 @@ import java.util.Date;
 public class OrderDto implements Serializable
 {
     public long OrderNo ;
-    public Date OrderDate ;
+    public String OrderDate ;
     public long GrandTotal ;
     public long UserId ;
     public String UserName ;
     public String DeliveryAddress ;
     public int CityCode ;
+    public String OrderStatus;
 
     public ArrayList<OrderLineItemDto> OrderLineItemList ;
+    public long getGrandTotal(){
+        GrandTotal=0;
+        for (OrderLineItemDto item:OrderLineItemList) {
+            GrandTotal=GrandTotal+item.Price*item.Quantity;
+        }
+        return GrandTotal;
+    }
 }

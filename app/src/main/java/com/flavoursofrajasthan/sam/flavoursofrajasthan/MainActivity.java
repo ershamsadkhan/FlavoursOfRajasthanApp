@@ -1,5 +1,8 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity
 
     TextStorage txtStorage;
     Alert alert;
+
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,27 +129,112 @@ public class MainActivity extends AppCompatActivity
                 fab.show();
             }
             fragment = new HomeFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .commit();
         } else if (id == R.id.nav_profile) {
             fragment = new LoginFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
+                    .commit();
         } else if (id == R.id.nav_pastorder) {
             if (fab != null) {
                 fab.show();
             }
             fragment = new PastOrderFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
+                    .commit();
         } else if (id == R.id.nav_trackorder) {
+            userId=txtStorage.getUserId();
+            if(userId==""){
+                alert.alertMessage(userId);
+                return true ;
+            }
             if (fab != null) {
                 fab.show();
             }
             fragment = new TrackOrderFragment();
-        }
-        if (fragment != null) {
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
+                    .commit();
+        }else if (id == R.id.nav_notifications) {
+            if (fab != null) {
+                fab.show();
+            }
+            fragment = new TrackOrderFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
                     .commit();
         }
+        else if (id == R.id.nav_rateus) {
+            RateUs();
+        }
+        else if (id == R.id.nav_share) {
+            Share();
+        }
+        else if (id == R.id.nav_terms) {
+            int count = fragmentManager.getBackStackEntryCount();
+            for(int i = 0; i < count-1; ++i) {
+                fragmentManager.popBackStack();
+            }
+
+            fragment = new TermsFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
+                    .commit();
+        }
+        else if (id == R.id.nav_help) {
+            int count = fragmentManager.getBackStackEntryCount();
+            for(int i = 0; i < count; ++i) {
+                fragmentManager.popBackStack();
+            }
+            fragment = new SupportFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .addToBackStack("tag")
+                    .commit();
+        }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void RateUs(){
+        Uri uri = Uri.parse("market://details?id=" + this.getPackageName());
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        // To count with Play market backstack, After pressing back button,
+        // to taken back to our application, we need to add following flags to intent.
+        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        try {
+            startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + this.getPackageName())));
+        }
+    }
+
+    public void Share(){
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Flavours Of Rajasthan");
+            String sAux = "\nHey Please Download This Cool Food App\n\n";
+            sAux = sAux + "https://play.google.com/store/apps/details?id="+  this.getPackageName()+"\n\n";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            startActivity(Intent.createChooser(i, "choose one"));
+        } catch(Exception e) {
+            e.toString();
+        }
     }
 }

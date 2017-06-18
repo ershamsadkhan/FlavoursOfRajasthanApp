@@ -69,7 +69,6 @@ public class HomeFragment extends Fragment {
 
         fragmentManager= getActivity().getSupportFragmentManager();
         int count = fragmentManager.getBackStackEntryCount();
-        Log.e("count", ""+count);
         for(int i = 0; i < count; ++i) {
             fragmentManager.popBackStack();
         }

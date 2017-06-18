@@ -67,6 +67,9 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
+        if (container != null) {
+            container.removeAllViews();
+        }
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.profile, container, false);
     }
