@@ -21,6 +21,9 @@
         android:fitsSystemWindows="true"
         android:paddingTop="20dp"
         app:menu="@menu/activity_main_drawer"
-        app:itemTextAppearance="@style/NavigationDrawerStyle" />
+        app:itemTextAppearance="@style/NavigationDrawerStyle"
+        app:itemIconTint="@drawable/drawer_item"
+        app:itemTextColor="@drawable/drawer_item"
+        />
 
 </android.support.v4.widget.DrawerLayout>

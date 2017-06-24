@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration.Settings;
+
 import org.apache.http.HttpStatus;
 
 import java.io.InputStream;
@@ -55,8 +57,9 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
+        String baseurl= Settings.BaseApiUrl+"/api/Image?ImageName="+url;
         try {
-            URL uri = new URL(url);
+            URL uri = new URL(baseurl);
             urlConnection = (HttpURLConnection) uri.openConnection();
 
             int statusCode = urlConnection.getResponseCode();

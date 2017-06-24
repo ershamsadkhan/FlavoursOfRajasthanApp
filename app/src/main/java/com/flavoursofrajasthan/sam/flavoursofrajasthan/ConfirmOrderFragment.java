@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiRequest;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiResponse;
@@ -58,7 +59,8 @@ public class ConfirmOrderFragment extends Fragment {
     Alert alert;
     ApiRequest<UserDto> apiRequest;
     ApiRequest<OrderDto> apiOrderRequest;
-    CustomProgress customProgress;
+    //CustomProgress customProgress;
+    TransaparentDialogue tpg;
 
     @Nullable
     @Override
@@ -77,7 +79,8 @@ public class ConfirmOrderFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         alert = new Alert(getActivity());
-        customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
+        tpg=new TransaparentDialogue(getActivity());
+        //customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
         txtStorage = new TextStorage(getActivity());
         gson = new Gson();
 
@@ -168,7 +171,7 @@ public class ConfirmOrderFragment extends Fragment {
         apiOrderRequest = new ApiRequest<OrderDto>();
         apiOrderRequest.Obj=orderDto;
 
-        customProgress.show();
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -188,14 +191,14 @@ public class ConfirmOrderFragment extends Fragment {
                             .commit();
                     txtStorage.storeCartData("");
                 }
-                customProgress.dismiss();
+                tpg.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<OrderDto>> call, Throwable t) {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
-                customProgress.dismiss();
+                tpg.dismiss();
                 Log.e("Api Failure", t.toString());
             }
         });

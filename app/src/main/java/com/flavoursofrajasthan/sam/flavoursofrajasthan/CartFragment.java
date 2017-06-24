@@ -52,7 +52,6 @@ public class CartFragment extends Fragment {
 
     Button btnBuy;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,6 +78,7 @@ public class CartFragment extends Fragment {
         alert = new Alert(getActivity());
         customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
         imageCache = ImageCache.getInstance();
+
 
         btnBuy=(Button)getActivity().findViewById(R.id.btn_buy);
 
@@ -121,15 +121,31 @@ public class CartFragment extends Fragment {
     public void loadCartView() {
         String tempOrderDto = txtStorage.getCartData();
         if (tempOrderDto == "") {
-            alert.alertMessage("No Items present in the cart");
+            //alert.alertMessage("No Items present in the cart");
+            Fragment fragment = new HomeFragment();
+            FragmentManager fragmentManager = getFragmentManager();
+
+                fragmentManager.popBackStack();
+                fragmentManager.popBackStack();
+
+            return;
         } else {
             orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
+            if(orderDto.OrderLineItemList.size()<1){
+                FragmentManager fragmentManager = getFragmentManager();
+
+                    fragmentManager.popBackStack();
+                    fragmentManager.popBackStack();
+
+                return;
+            }
         }
 
         for (int i = 0; i < orderDto.OrderLineItemList.size(); i++) {
             OrderLineItemDto tempOrderLineItemDto = orderDto.OrderLineItemList.get(i);
             View hiddenInfo = getActivity().getLayoutInflater().inflate(R.layout.cart_item, linearLayout, false);
             Button demobtn = (Button) hiddenInfo.findViewById(R.id.btn_edit);
+            Button removebtn = (Button) hiddenInfo.findViewById(R.id.btn_remove);
             ImageView itemImage = (ImageView) hiddenInfo.findViewById(R.id.thumbImage);
             TextView itemHeader = (TextView) hiddenInfo.findViewById(R.id.item_header);
             TextView itemQty = (TextView) hiddenInfo.findViewById(R.id.itemqty);
@@ -142,11 +158,38 @@ public class CartFragment extends Fragment {
             itemQty.setText("" + tempOrderLineItemDto.Quantity);
             itemAmount.setText("" + (tempOrderLineItemDto.Price * tempOrderLineItemDto.Quantity));
 
-            demobtn.setId((int) tempOrderLineItemDto.ItemId);
+            demobtn.setId(i);
+            removebtn.setId(i);
             demobtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "" + v.getId(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "" + v.getId(), Toast.LENGTH_SHORT).show();
+
+                    txtStorage.storeEditItemId(""+v.getId());
+
+                    Fragment fragment = new OrderFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .addToBackStack("tag")
+                            .commit();
+
+                }
+            });
+
+            removebtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "Item Removed", Toast.LENGTH_SHORT).show();
+
+                    removeItem(v.getId());
+
+                    Fragment fragment = new CartFragment();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .commit();
+
                 }
             });
             linearLayout.addView(hiddenInfo);
@@ -173,5 +216,15 @@ public class CartFragment extends Fragment {
                 txtView.setText("Full Plate");
                 break;
         }
+    }
+
+    public void removeItem(int Id){
+        orderDto.OrderLineItemList.remove(Id);
+        if(orderDto.OrderLineItemList.size()>=1) {
+            txtStorage.storeCartData(gson.toJson(orderDto));
+        }else{
+            txtStorage.storeCartData("");
+        }
+
     }
 }

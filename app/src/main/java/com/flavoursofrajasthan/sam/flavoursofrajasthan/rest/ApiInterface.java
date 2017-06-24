@@ -3,6 +3,7 @@ package com.flavoursofrajasthan.sam.flavoursofrajasthan.rest;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiRequest;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiResponse;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Offer.OfferDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderSearch;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.User.UserDto;
@@ -33,5 +34,8 @@ public interface ApiInterface {
 
     @POST("api/User/UpdateDetails")
     Call<ApiResponse<UserDto>> UpdateUser(@Body ApiRequest<UserDto> request);
+
+    @POST("api/Offer/GetOffers")
+    Call<ApiResponse<OfferDto>> GetOffers(@Body ApiRequest<OfferDto> request);
 
 }

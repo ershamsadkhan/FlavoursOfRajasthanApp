@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomToast;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
@@ -62,6 +63,7 @@ public class ProfileFragment extends Fragment {
     Alert alert;
     CustomToast customToast;
 
+    TransaparentDialogue tpg;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +82,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
 
+        tpg=new TransaparentDialogue(getActivity());
         FloatingActionButton floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
             floatingActionButton.hide();
@@ -195,6 +198,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public void UpdateUser() {
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -212,6 +216,7 @@ public class ProfileFragment extends Fragment {
                     logoutBtn.setVisibility(View.VISIBLE);
                     disableFields();
                 }
+                tpg.dismiss();
             }
 
             @Override
@@ -219,11 +224,13 @@ public class ProfileFragment extends Fragment {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
                 Log.e("Api Failure", t.toString());
+                tpg.dismiss();
             }
         });
     }
 
     public void LogInUser() {
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -243,6 +250,7 @@ public class ProfileFragment extends Fragment {
                     emailAddressEditText.setText(userDto.UserEmailAddress);
                     phoneNumberEditText.setText(userDto.UserPhoneNumber);
                 }
+                tpg.dismiss();
             }
 
             @Override
@@ -250,11 +258,13 @@ public class ProfileFragment extends Fragment {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
                 Log.e("Api Failure", t.toString());
+                tpg.dismiss();
             }
         });
     }
 
     public void SignUpUser() {
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -273,6 +283,7 @@ public class ProfileFragment extends Fragment {
                             .replace(R.id.flContent, fragment)
                             .commit();
                 }
+                tpg.dismiss();
             }
 
             @Override
@@ -280,6 +291,7 @@ public class ProfileFragment extends Fragment {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
                 Log.e("Api Failure", t.toString());
+                tpg.dismiss();
             }
         });
     }

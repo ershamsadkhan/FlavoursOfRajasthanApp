@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,9 @@ public class CustomListAdapter extends BaseAdapter {
     ItemDtoForOrder itemDtoForOrder;
     public CustomListAdapter(Context context, ArrayList<ItemDto> listData) {
         this.listData = listData;
+        Log.e("context FOR",context.toString());
         layoutInflater = LayoutInflater.from(context);
+
         this.context=context;
     }
 

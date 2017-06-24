@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
@@ -48,6 +49,10 @@ public class HomeFragment extends Fragment {
 
     FloatingActionButton floatingActionButton;
     FragmentManager fragmentManager;
+    ListView listView;
+    int retry=0;
+
+    TransaparentDialogue tpg;
 
     @Nullable
     @Override
@@ -67,13 +72,14 @@ public class HomeFragment extends Fragment {
         //you can set the title for your toolbar here for different fragments different titles
         //getActivity().setTitle("Menu 1");
 
+        tpg=new TransaparentDialogue(getActivity());
         fragmentManager= getActivity().getSupportFragmentManager();
         int count = fragmentManager.getBackStackEntryCount();
         for(int i = 0; i < count; ++i) {
             fragmentManager.popBackStack();
         }
 
-        final ListView listView = (ListView) getView().findViewById(R.id.items_list);
+        listView= (ListView) getView().findViewById(R.id.items_list);
         btnItemClick = (Button) getView().findViewById(R.id.btn_item_selected);
 
         alert = new Alert(getActivity());
@@ -88,16 +94,16 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-                ItemDto newsData = (ItemDto) listView.getItemAtPosition(position);
+                /*ItemDto newsData = (ItemDto) listView.getItemAtPosition(position);
 
                 Fragment fragment = new OrderFragment();
 
                 fragmentManager.beginTransaction()
                         .replace(((ViewGroup)getView().getParent()).getId(), fragment)
                         .addToBackStack("tag")
-                        .commit();
+                        .commit();*/
 
-                Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(), "Selected :" + " " + newsData, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -127,7 +133,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        customProgress.show();
+        getListData();
+
+    }
+
+    public void getListData(){
+        //customProgress.show();
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -147,26 +159,31 @@ public class HomeFragment extends Fragment {
                             //START LOADING IMAGES FOR EACH STUDENT
                             s.loadImage(sta);
                         }
-                        customProgress.dismiss();
+                        tpg.dismiss();
                     } else {
-                        customProgress.dismiss();
                         alert.alertMessage(response.body().ErrMsg);
                     }
                 }else{
                     alert.alertMessage("" + "server error");
-                    customProgress.dismiss();
+                    tpg.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<CategoryDto>> call, Throwable t) {
                 // Log error here since request failed
-                alert.alertMessage("" + getString(R.string.server_error));
-                customProgress.dismiss();
+                if(retry<3){
+                    tpg.dismiss();
+                    getListData();
+                    retry++;
+                }
+                else {
+                    tpg.dismiss();
+                    alert.alertMessage("" + getString(R.string.server_error));
+                }
                 Log.e("Api Failure", t.toString());
             }
         });
-
     }
 
 }

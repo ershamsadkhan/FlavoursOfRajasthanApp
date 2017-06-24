@@ -63,4 +63,16 @@ public class TextStorage {
         SharedPreferences sharedPreferences = context.getSharedPreferences(MY_PREF,MODE_PRIVATE);
         return sharedPreferences.getString("Cart","");
     }
+
+    public void storeEditItemId(String Value){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MY_PREF,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("edititem", Value);
+        editor.apply();
+    }
+
+    public String getEditItemId(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(MY_PREF,MODE_PRIVATE);
+        return sharedPreferences.getString("edititem","");
+    }
 }

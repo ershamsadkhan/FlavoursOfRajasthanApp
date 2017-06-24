@@ -5,6 +5,6 @@
     <color name="colorAccent">#03a9f4</color>
     <color name="placedOrder">#75aeee</color>
     <color name="deliveredOrder">#a0eb8e</color>
-    <color name="cancelledOrder">#ee4d3b</color>
+    <color name="cancelledOrder">#fd7a6b</color>
     <color name="outForDeliveryOrder">#fbd63c</color>
 </resources>

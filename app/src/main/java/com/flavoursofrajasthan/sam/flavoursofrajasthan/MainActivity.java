@@ -139,33 +139,47 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("tag")
                     .commit();
         } else if (id == R.id.nav_pastorder) {
-            if (fab != null) {
-                fab.show();
-            }
-            fragment = new PastOrderFragment();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.flContent, fragment)
-                    .addToBackStack("tag")
-                    .commit();
-        } else if (id == R.id.nav_trackorder) {
-            userId=txtStorage.getUserId();
+            userId=txtStorage.getUserName();
             if(userId==""){
-                alert.alertMessage(userId);
-                return true ;
+                fragment = new LoginFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .addToBackStack("tag")
+                        .commit();
+            }else {
+                if (fab != null) {
+                    fab.show();
+                }
+                fragment = new PastOrderFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .addToBackStack("tag")
+                        .commit();
             }
-            if (fab != null) {
-                fab.show();
+        } else if (id == R.id.nav_trackorder) {
+            userId=txtStorage.getUserName();
+            if(userId==""){
+                fragment = new LoginFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .addToBackStack("tag")
+                        .commit();
             }
-            fragment = new TrackOrderFragment();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.flContent, fragment)
-                    .addToBackStack("tag")
-                    .commit();
+            else {
+                if (fab != null) {
+                    fab.show();
+                }
+                fragment = new TrackOrderFragment();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .addToBackStack("tag")
+                        .commit();
+            }
         }else if (id == R.id.nav_notifications) {
             if (fab != null) {
                 fab.show();
             }
-            fragment = new TrackOrderFragment();
+            fragment = new OffersFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
                     .addToBackStack("tag")
@@ -178,10 +192,6 @@ public class MainActivity extends AppCompatActivity
             Share();
         }
         else if (id == R.id.nav_terms) {
-            int count = fragmentManager.getBackStackEntryCount();
-            for(int i = 0; i < count-1; ++i) {
-                fragmentManager.popBackStack();
-            }
 
             fragment = new TermsFragment();
             fragmentManager.beginTransaction()
@@ -190,10 +200,6 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
         else if (id == R.id.nav_help) {
-            int count = fragmentManager.getBackStackEntryCount();
-            for(int i = 0; i < count; ++i) {
-                fragmentManager.popBackStack();
-            }
             fragment = new SupportFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
@@ -204,6 +210,7 @@ public class MainActivity extends AppCompatActivity
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawer.setScrimColor(getResources().getColor(android.R.color.transparent));
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

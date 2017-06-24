@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.ImageCache;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
@@ -65,8 +66,8 @@ public class PastOrderFragment extends Fragment {
     TextStorage txtStorage;
     Gson gson;
     Alert alert;
-    CustomProgress customProgress;
-
+    //CustomProgress customProgress;
+    TransaparentDialogue tpg;
     ImageCache imageCache;
 
     Button btnBuy;
@@ -99,7 +100,8 @@ public class PastOrderFragment extends Fragment {
         try {
             alert = new Alert(getActivity());
             txtStorage = new TextStorage(getActivity());
-            customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
+            tpg=new TransaparentDialogue(getActivity());
+            //customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
             imageCache = ImageCache.getInstance();
             dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -205,7 +207,7 @@ public class PastOrderFragment extends Fragment {
     }
 
     public void GetNewOrders(ApiRequest<OrderSearch> request) {
-        customProgress.show();
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -223,25 +225,27 @@ public class PastOrderFragment extends Fragment {
 
                     } else {
                         alert.alertMessage(response.body().ErrMsg);
+                        FragmentManager fragmentManager = getFragmentManager();
+                        fragmentManager.popBackStack();
                     }
                 } else {
                     alert.alertMessage("" + "server error");
                 }
-                customProgress.dismiss();
+                tpg.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<OrderDto>> call, Throwable t) {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
-                customProgress.dismiss();
+                tpg.dismiss();
                 Log.e("Api Failure", t.toString());
             }
         });
     }
 
     public void CancelOrder(ApiRequest<OrderDto> request) {
-        customProgress.show();
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -266,14 +270,14 @@ public class PastOrderFragment extends Fragment {
                 } else {
                     alert.alertMessage("" + "server error");
                 }
-                customProgress.dismiss();
+                tpg.dismiss();
             }
 
             @Override
             public void onFailure(Call<ApiResponse<OrderDto>> call, Throwable t) {
                 // Log error here since request failed
                 alert.alertMessage("" + getString(R.string.server_error));
-                customProgress.dismiss();
+                tpg.dismiss();
                 Log.e("Api Failure", t.toString());
             }
         });
