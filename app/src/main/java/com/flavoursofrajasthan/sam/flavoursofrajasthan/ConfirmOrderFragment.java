@@ -6,11 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +27,7 @@ import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiRequest;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiResponse;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDtoForOrder;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Offer.OfferDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Order.OrderLineItemDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.User.UserDto;
@@ -33,6 +38,8 @@ import com.google.gson.Gson;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.view.View.GONE;
 
 /**
  * Created by SAM on 6/4/2017.
@@ -47,6 +54,11 @@ public class ConfirmOrderFragment extends Fragment {
     Spinner citySpinner;
     Button btnConfirm;
 
+    LinearLayout offerLayout;
+    TextView offreHeader;
+    TextView saveAmt;
+    CheckBox checkOffer;
+
     TextStorage txtStorage;
     Gson gson;
 
@@ -55,6 +67,9 @@ public class ConfirmOrderFragment extends Fragment {
     OrderDto orderDto;
     OrderLineItemDto orderLineItemDto;
     UserDto userDto;
+    OfferDto applicableOfferDto;
+    long discountedAmt=0;
+    int discountedPer=0;
 
     Alert alert;
     ApiRequest<UserDto> apiRequest;
@@ -137,6 +152,18 @@ public class ConfirmOrderFragment extends Fragment {
         getActivity().setTitle("Menu 1");
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.setGroupVisible(0, false);
+    }
+
     public void LogInUser() {
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
@@ -153,6 +180,8 @@ public class ConfirmOrderFragment extends Fragment {
                     userName.setText(userDto.UserName);
                     userEmail.setText(userDto.UserEmailAddress);
                     deliveryAddress.setText(userDto.PrimaryAddress);
+
+                    GetApplicableOffer();
                 }
             }
 
@@ -200,6 +229,68 @@ public class ConfirmOrderFragment extends Fragment {
                 alert.alertMessage("" + getString(R.string.server_error));
                 tpg.dismiss();
                 Log.e("Api Failure", t.toString());
+            }
+        });
+    }
+
+    public void GetApplicableOffer(){
+        tpg.show();
+
+        ApiRequest<OfferDto> applicableOfferRequest=new ApiRequest<OfferDto>();
+        applicableOfferDto=new OfferDto();
+        applicableOfferDto.UserId=txtStorage.getUserId();
+        applicableOfferRequest.Obj=applicableOfferDto;
+
+        offerLayout=(LinearLayout)getActivity().findViewById(R.id.deliverydetails) ;
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ApiResponse<OfferDto>> call = apiService.ApplicableOffers(applicableOfferRequest);
+        call.enqueue(new Callback<ApiResponse<OfferDto>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<OfferDto>> call, Response<ApiResponse<OfferDto>> response) {
+                //int statusCode = response.code();
+                if (response.body().Status == false) {
+                    //alert.alertMessage(response.body().ErrMsg);
+                    offerLayout.setVisibility(View.GONE);
+                } else {
+                    applicableOfferDto = response.body().ObjList.get(0);
+                    //alert.alertMessage(applicableOfferDto.OfferHeader);
+                    offerLayout.setVisibility(View.VISIBLE);
+
+                    offreHeader=(TextView)offerLayout.findViewById(R.id.offerheader);
+                    saveAmt=(TextView)offerLayout.findViewById(R.id.saveamt);;
+                    checkOffer=(CheckBox)offerLayout.findViewById(R.id.checkoffer);
+
+                    offreHeader.setText(applicableOfferDto.OfferHeader);
+                    discountedPer=applicableOfferDto.PercentOffer;
+                    discountedAmt=-orderDto.getGrandTotal()*discountedPer/100;
+                    saveAmt.setText(""+discountedAmt);
+
+                    checkOffer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if(isChecked==true){
+                                grandTotal.setText(""+(orderDto.getGrandTotal()+discountedAmt));
+                                orderDto.AppliedOfferCode=applicableOfferDto.OfferCode;
+                            }else{
+                                grandTotal.setText(""+orderDto.getGrandTotal());
+                                orderDto.AppliedOfferCode="";
+                            }
+                        }
+                    });
+                }
+
+                tpg.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<OfferDto>> call, Throwable t) {
+                // Log error here since request failed
+                alert.alertMessage("" + getString(R.string.server_error));
+                offerLayout.setVisibility(View.GONE);
+                Log.e("Api Failure", t.toString());
+                tpg.dismiss();
             }
         });
     }

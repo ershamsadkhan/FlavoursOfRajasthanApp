@@ -111,4 +111,8 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="colorAccent">@android:color/holo_orange_dark</item>
     </style>
+
+    <style name="TextLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">15dp</item>
+    </style>
 </resources>

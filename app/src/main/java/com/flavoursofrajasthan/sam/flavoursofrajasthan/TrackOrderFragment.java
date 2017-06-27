@@ -1,5 +1,6 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomDialogClass;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.ImageCache;
@@ -62,6 +65,7 @@ public class TrackOrderFragment extends Fragment {
     OrderSearch orderSearch;
     ApiRequest<OrderSearch> request;
     SimpleDateFormat dateFormat;
+    ArrayList<OrderDto> orderDtoArrayList;
 
     TextStorage txtStorage;
     Gson gson;
@@ -73,6 +77,8 @@ public class TrackOrderFragment extends Fragment {
     Button btnBuy;
 
     LinearLayout fatherLayout;
+    CustomDialogClass customDialogClass;
+    ApiRequest<OrderDto> cancelOrderRequest;
 
     @Nullable
     @Override
@@ -100,7 +106,8 @@ public class TrackOrderFragment extends Fragment {
         try {
             alert = new Alert(getActivity());
             txtStorage = new TextStorage(getActivity());
-            tpg=new TransaparentDialogue(getActivity());
+            tpg = new TransaparentDialogue(getActivity());
+            customDialogClass = new CustomDialogClass(getActivity());
             //customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
             imageCache = ImageCache.getInstance();
             dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -130,9 +137,22 @@ public class TrackOrderFragment extends Fragment {
         getActivity().setTitle("Menu 1");
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.setGroupVisible(0, false);
+    }
+
     public void loadNewOrders(ArrayList<OrderDto> orderDtoList) {
 
 
+        int j=0;
         fatherLayout = (LinearLayout) rootView.findViewById(R.id.fatherlayout);
         for (OrderDto tempOrderDto : orderDtoList) {
             View hiddenMainInfo = getActivity().getLayoutInflater().inflate(R.layout.track_order_main_item, fatherLayout, false);
@@ -142,6 +162,8 @@ public class TrackOrderFragment extends Fragment {
             BeautifyOrderHeader(relativeLayout, tempOrderDto.GrandTotal, tempOrderDto.OrderNo,
                     linearLayoutMainCopy, tempOrderDto.OrderDate, tempOrderDto.OrderStatus);
 
+            BeautifyOfferLayout(linearLayoutMainCopy, tempOrderDto);
+
             Button btnCancel = (Button) hiddenMainInfo.findViewById(R.id.btn_cancel);
             btnCancel.setId((int) tempOrderDto.OrderNo);
             btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -149,13 +171,49 @@ public class TrackOrderFragment extends Fragment {
                 public void onClick(View v) {
                     //Toast.makeText(getActivity(), "" + v.getId(), Toast.LENGTH_SHORT).show();
 
-                    ApiRequest<OrderDto> cancelOrderRequest=new ApiRequest<OrderDto>();
-                    OrderDto tempCancelOrderDto=new OrderDto();
-                    tempCancelOrderDto.OrderNo=v.getId();
-                    cancelOrderRequest.Obj=tempCancelOrderDto;
+                    cancelOrderRequest = new ApiRequest<OrderDto>();
+                    OrderDto tempCancelOrderDto = new OrderDto();
+                    tempCancelOrderDto.OrderNo = v.getId();
+                    cancelOrderRequest.Obj = tempCancelOrderDto;
 
-                    CancelOrder(cancelOrderRequest );
+                    customDialogClass.setDialogResult(new CustomDialogClass.OnMyDialogResult() {
+                        @Override
+                        public void finish(String result) {
+                            CancelOrder(cancelOrderRequest);
+                        }
+                    });
+                    customDialogClass.show();
+                    //
 
+                }
+            });
+
+            Button btnViewDetails = (Button) hiddenMainInfo.findViewById(R.id.btn_view);
+            btnViewDetails.setId(j++);
+            btnViewDetails.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getActivity(), "" + v.getId(), Toast.LENGTH_SHORT).show();
+
+
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.order_details);
+                    // set the custom dialog components - text, image and button
+                    TextView txtAddress = (TextView) dialog.findViewById(R.id.address);
+                    TextView txtCity = (TextView) dialog.findViewById(R.id.city);
+                    txtAddress.setText(orderDtoArrayList.get(v.getId()).DeliveryAddress);
+                    txtCity.setText(getCity(orderDtoArrayList.get(v.getId()).CityCode));
+
+                    Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                    // if button is clicked, close the custom dialog
+                    dialogButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
                 }
             });
 
@@ -220,7 +278,7 @@ public class TrackOrderFragment extends Fragment {
                     if (response.body().Status == true) {
                         ArrayList<OrderDto> res = response.body().ObjList;
                         //alert.alertMessage(response.body().toString());
-
+                        orderDtoArrayList=res;
                         loadNewOrders(res);
 
                     } else {
@@ -289,7 +347,7 @@ public class TrackOrderFragment extends Fragment {
                                     LinearLayout linearLayoutMainCopy, String Date, String OrderStatus) {
         TextView orderNo = (TextView) relativeLayout.findViewById(R.id.orderno);
         TextView orderStatus = (TextView) relativeLayout.findViewById(R.id.orderstatus);
-        Button cancelBtn=(Button) linearLayoutMainCopy.findViewById(R.id.btn_cancel);
+        Button cancelBtn = (Button) linearLayoutMainCopy.findViewById(R.id.btn_cancel);
         orderNo.setText("#Order No: " + OrderNo);
 
         TextView tvGrandTotal = (TextView) linearLayoutMainCopy.findViewById(R.id.totalamount);
@@ -318,5 +376,47 @@ public class TrackOrderFragment extends Fragment {
                 break;
         }
 
+    }
+
+    public void BeautifyOfferLayout(LinearLayout linearLayoutMainCopy, OrderDto tempOrderDto) {
+        RelativeLayout offerLay = (RelativeLayout) linearLayoutMainCopy.findViewById(R.id.offerlay);
+        TextView offerHeader = (TextView) offerLay.findViewById(R.id.offerheader);
+        TextView offerDisc = (TextView) offerLay.findViewById(R.id.offerdisc);
+
+        TextView tvGrandTotal = (TextView) linearLayoutMainCopy.findViewById(R.id.totalamount);
+
+        long DiscAmt = 0;
+        if (tempOrderDto.offerDto == null) {
+            offerLay.setVisibility(View.GONE);
+        } else {
+            DiscAmt = -tempOrderDto.getGrandTotal() * tempOrderDto.offerDto.PercentOffer / 100;
+            offerHeader.setText(tempOrderDto.offerDto.OfferHeader);
+            offerDisc.setText("" + DiscAmt);
+
+            tvGrandTotal.setText("" + (tempOrderDto.getGrandTotal() + DiscAmt));
+        }
+    }
+
+    public String getCity(int id){
+
+        String cityName="";
+        switch (id){
+            case 1:
+                cityName= "Gomtinagar";
+                break;
+
+            case 2:
+                cityName= "Mahanagar";
+            break;
+
+            case 3:
+                cityName= "Indranagar";
+            break;
+
+            case 4:
+                cityName= "Gomtinagar Extension";
+            break;
+        }
+        return cityName;
     }
 }

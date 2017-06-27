@@ -38,4 +38,7 @@ public interface ApiInterface {
     @POST("api/Offer/GetOffers")
     Call<ApiResponse<OfferDto>> GetOffers(@Body ApiRequest<OfferDto> request);
 
+    @POST("api/Offer/Applicableoffers")
+    Call<ApiResponse<OfferDto>> ApplicableOffers(@Body ApiRequest<OfferDto> request);
+
 }

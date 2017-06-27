@@ -1,5 +1,6 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,6 +65,8 @@ public class PastOrderFragment extends Fragment {
     ApiRequest<OrderSearch> request;
     SimpleDateFormat dateFormat;
 
+    ArrayList<OrderDto> orderDtoArrayList;
+
     TextStorage txtStorage;
     Gson gson;
     Alert alert;
@@ -91,6 +95,18 @@ public class PastOrderFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
         //loadCartView();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.setGroupVisible(0, false);
     }
 
     @Override
@@ -133,6 +149,7 @@ public class PastOrderFragment extends Fragment {
     public void loadNewOrders(ArrayList<OrderDto> orderDtoList) {
 
 
+        int j=0;
         fatherLayout = (LinearLayout) rootView.findViewById(R.id.fatherlayout);
         for (OrderDto tempOrderDto : orderDtoList) {
             View hiddenMainInfo = getActivity().getLayoutInflater().inflate(R.layout.track_order_main_item, fatherLayout, false);
@@ -141,6 +158,8 @@ public class PastOrderFragment extends Fragment {
             RelativeLayout relativeLayout = (RelativeLayout) linearLayoutMainCopy.findViewById(R.id.orderheaderrel);
             BeautifyOrderHeader(relativeLayout, tempOrderDto.GrandTotal, tempOrderDto.OrderNo,
                     linearLayoutMainCopy, tempOrderDto.OrderDate, tempOrderDto.OrderStatus);
+
+            BeautifyOfferLayout(linearLayoutMainCopy,tempOrderDto);
 
             Button btnCancel = (Button) hiddenMainInfo.findViewById(R.id.btn_cancel);
             btnCancel.setId((int) tempOrderDto.OrderNo);
@@ -159,6 +178,34 @@ public class PastOrderFragment extends Fragment {
                 }
             });
 
+            Button btnViewDetails = (Button) hiddenMainInfo.findViewById(R.id.btn_view);
+            btnViewDetails.setId(j++);
+            btnViewDetails.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getActivity(), "" + v.getId(), Toast.LENGTH_SHORT).show();
+
+
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.order_details);
+                    // set the custom dialog components - text, image and button
+                    TextView txtAddress = (TextView) dialog.findViewById(R.id.address);
+                    TextView txtCity = (TextView) dialog.findViewById(R.id.city);
+                    txtAddress.setText(orderDtoArrayList.get(v.getId()).DeliveryAddress);
+                    txtCity.setText(getCity(orderDtoArrayList.get(v.getId()).CityCode));
+
+                    Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                    // if button is clicked, close the custom dialog
+                    dialogButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    dialog.show();
+                }
+            });
             LinearLayout linearLayoutMainChildCopy = (LinearLayout) hiddenMainInfo.findViewById(R.id.mainchildLayout);
             for (int i = 0; i < tempOrderDto.OrderLineItemList.size(); i++) {
 
@@ -220,7 +267,7 @@ public class PastOrderFragment extends Fragment {
                     if (response.body().Status == true) {
                         ArrayList<OrderDto> res = response.body().ObjList;
                         //alert.alertMessage(response.body().toString());
-
+                        orderDtoArrayList=res;
                         loadNewOrders(res);
 
                     } else {
@@ -316,5 +363,48 @@ public class PastOrderFragment extends Fragment {
                 break;
         }
 
+    }
+
+    public void BeautifyOfferLayout(LinearLayout linearLayoutMainCopy,OrderDto tempOrderDto){
+        RelativeLayout offerLay=(RelativeLayout)linearLayoutMainCopy.findViewById(R.id.offerlay);
+        TextView offerHeader=(TextView)offerLay.findViewById(R.id.offerheader);
+        TextView offerDisc=(TextView)offerLay.findViewById(R.id.offerdisc);
+
+        TextView tvGrandTotal = (TextView) linearLayoutMainCopy.findViewById(R.id.totalamount);
+
+        long DiscAmt=0;
+        if(tempOrderDto.offerDto==null){
+            offerLay.setVisibility(View.GONE);
+        }
+        else{
+            DiscAmt=-tempOrderDto.getGrandTotal()*tempOrderDto.offerDto.PercentOffer/100;
+            offerHeader.setText(tempOrderDto.offerDto.OfferHeader);
+            offerDisc.setText(""+DiscAmt);
+
+            tvGrandTotal.setText("" + (tempOrderDto.getGrandTotal()+DiscAmt));
+        }
+    }
+
+    public String getCity(int id){
+
+        String cityName="";
+        switch (id){
+            case 1:
+                cityName= "Gomtinagar";
+                break;
+
+            case 2:
+                cityName= "Mahanagar";
+                break;
+
+            case 3:
+                cityName= "Indranagar";
+                break;
+
+            case 4:
+                cityName= "Gomtinagar Extension";
+                break;
+        }
+        return cityName;
     }
 }

@@ -15,4 +15,5 @@ public class OfferDto implements Serializable {
     public Boolean IsActive ;
     public int PercentOffer ;
     public int RsOffer ;
+    public String UserId ;
 }

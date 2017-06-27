@@ -24,10 +24,10 @@
     </string-array>
 
     <string-array name="cities_array">
-        <item>Lucknow</item>
-        <item>Mumbai</item>
-        <item>Banglore</item>
-        <item>Delhi</item>
+        <item>Gomtinagar</item>
+        <item>Mahanagar</item>
+        <item>Indranagar</item>
+        <item>Gomtinagar Extension</item>
     </string-array>
     <string-array name="cities_array_values">
         <item>1</item>
