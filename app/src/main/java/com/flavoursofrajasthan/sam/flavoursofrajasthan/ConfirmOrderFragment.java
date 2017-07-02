@@ -93,6 +93,11 @@ public class ConfirmOrderFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("CONFIRM");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         alert = new Alert(getActivity());
         tpg=new TransaparentDialogue(getActivity());
         //customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
@@ -145,7 +150,9 @@ public class ConfirmOrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //alert.alertMessage("Order Place");
-                PlaceOrder();
+                if(ValidateFields()) {
+                    PlaceOrder();
+                }
             }
         });
 
@@ -165,6 +172,7 @@ public class ConfirmOrderFragment extends Fragment {
     }
 
     public void LogInUser() {
+        tpg.show();
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -188,6 +196,7 @@ public class ConfirmOrderFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiResponse<UserDto>> call, Throwable t) {
                 // Log error here since request failed
+                tpg.dismiss();
                 alert.alertMessage("" + getString(R.string.server_error));
                 Log.e("Api Failure", t.toString());
             }
@@ -293,5 +302,21 @@ public class ConfirmOrderFragment extends Fragment {
                 tpg.dismiss();
             }
         });
+    }
+
+    public Boolean ValidateFields() {
+        Boolean result = false;
+
+        if (deliveryAddress.getText().toString().trim().length() == 0) {
+            deliveryAddress.requestFocus();
+            deliveryAddress.setError(
+                    "Delivery Address Is Required"
+            );
+            result = false;
+        }
+        else {
+            result = true;
+        }
+        return result;
     }
 }

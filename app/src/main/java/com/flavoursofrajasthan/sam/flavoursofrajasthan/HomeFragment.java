@@ -1,13 +1,18 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Movie;
+import android.graphics.Typeface;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -16,12 +21,14 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration.Settings;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.ItemDto;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.ApiRequest;
@@ -43,6 +50,8 @@ import retrofit2.Response;
 public class HomeFragment extends Fragment {
 
 
+    private Activity mActivity;
+
     public CustomListAdapter sta;
     Alert alert;
     CustomProgress customProgress;
@@ -51,7 +60,7 @@ public class HomeFragment extends Fragment {
     FloatingActionButton floatingActionButton;
     FragmentManager fragmentManager;
     ListView listView;
-    int retry=0;
+    int retry = 0;
 
     TransaparentDialogue tpg;
 
@@ -73,33 +82,50 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         menu.setGroupVisible(0, false);
     }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         //getActivity().setTitle("Menu 1");
 
-        tpg=new TransaparentDialogue(getActivity());
-        fragmentManager= getActivity().getSupportFragmentManager();
-        int count = fragmentManager.getBackStackEntryCount();
-        for(int i = 0; i < count; ++i) {
-            fragmentManager.popBackStack();
-        }
-
-        listView= (ListView) getView().findViewById(R.id.items_list);
+        tpg = new TransaparentDialogue(getActivity());
+        fragmentManager = getActivity().getSupportFragmentManager();
+        
+        listView = (ListView) getView().findViewById(R.id.items_list);
         btnItemClick = (Button) getView().findViewById(R.id.btn_item_selected);
 
         alert = new Alert(getActivity());
-        customProgress = new CustomProgress(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
+        customProgress = new CustomProgress(mActivity, mActivity, getLayoutInflater(savedInstanceState));
 
         floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
             floatingActionButton.show();
         }
+
+
+        Typeface m_typeFace = Typeface.createFromAsset(getActivity().getAssets(), Settings.fontPath);
+        TextView title = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        title.setText("Flavours of Rajasthan");
+
+        title.setTypeface(m_typeFace);
+        title.setAllCaps(false);
+
+        /*DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+        float dp = 20f;
+        float fpixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, metrics);
+        int pixels = Math.round(fpixels);*/
+        title.setTextSize(25);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -148,7 +174,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void getListData(){
+    public void getListData() {
         //customProgress.show();
         tpg.show();
         ApiInterface apiService =
@@ -159,7 +185,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<ApiResponse<CategoryDto>> call, Response<ApiResponse<CategoryDto>> response) {
                 //int statusCode = response.code();
-                if(response.body()!=null) {
+                if (response.body() != null) {
                     if (response.body().Status == true) {
                         ArrayList<CategoryDto> res = response.body().ObjList;
                         sta = new CustomListAdapter(getActivity(), res.get(0).itemDtoList);
@@ -174,7 +200,7 @@ public class HomeFragment extends Fragment {
                     } else {
                         alert.alertMessage(response.body().ErrMsg);
                     }
-                }else{
+                } else {
                     alert.alertMessage("" + "server error");
                     tpg.dismiss();
                 }
@@ -183,12 +209,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<ApiResponse<CategoryDto>> call, Throwable t) {
                 // Log error here since request failed
-                if(retry<3){
+                if (retry < 3) {
                     tpg.dismiss();
                     getListData();
                     retry++;
-                }
-                else {
+                } else {
                     tpg.dismiss();
                     alert.alertMessage("" + getString(R.string.server_error));
                 }

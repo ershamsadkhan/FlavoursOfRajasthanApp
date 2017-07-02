@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 /**
  * Created by SAM on 6/18/2017.
@@ -31,6 +32,11 @@ public class SupportFragment extends Fragment {
         if (floatingActionButton != null) {
             floatingActionButton.hide();
         }
+
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("HELP AND SUPPORT");
+        title.setTypeface(null);
+        title.setTextSize(20);
     }
 
     @Nullable

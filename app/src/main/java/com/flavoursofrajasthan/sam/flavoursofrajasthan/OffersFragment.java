@@ -60,6 +60,12 @@ public class OffersFragment extends Fragment {
         if (floatingActionButton != null) {
             floatingActionButton.hide();
         }
+
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("OFFERS");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         tpg=new TransaparentDialogue(getActivity());
         alert = new Alert(getActivity());
         customToast = new CustomToast(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));

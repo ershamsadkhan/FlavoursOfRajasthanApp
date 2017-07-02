@@ -125,9 +125,9 @@ public class CustomListAdapter extends BaseAdapter {
 
             int count = fragmentManager.getBackStackEntryCount();
             for(int i = 0; i < count; ++i) {
-                fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
             }
-
+            //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent,fragment)
                     .addToBackStack( "tag" ).commit();

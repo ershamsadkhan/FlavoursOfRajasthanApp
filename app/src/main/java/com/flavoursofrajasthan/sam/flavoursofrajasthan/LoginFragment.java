@@ -83,6 +83,11 @@ public class LoginFragment extends Fragment {
             floatingActionButton.hide();
         }
 
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("LOGIN");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         alert = new Alert(getActivity());
         txtStorage = new TextStorage(getActivity());
         customToast = new CustomToast(getActivity(), getActivity(), getLayoutInflater(savedInstanceState));
@@ -105,6 +110,7 @@ public class LoginFragment extends Fragment {
         if (userDto.Userid > 0 && userDto.UserName != "" && userDto.UserPwd != "") {
             Fragment fragment = new ProfileFragment();
             FragmentManager fragmentManager = getFragmentManager();
+            //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
                     .commit();
@@ -118,7 +124,9 @@ public class LoginFragment extends Fragment {
                 userDto.UserName = userNameEditText.getText().toString();
                 userDto.UserPwd = userPwdEditText.getText().toString();
 
-                LogInUser();
+                if(ValidateFields()) {
+                    LogInUser();
+                }
             }
         });
 
@@ -134,6 +142,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 Fragment fragment = new ProfileFragment();
                 FragmentManager fragmentManager = getFragmentManager();
+                //fragmentManager.popBackStackImmediate();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .commit();
@@ -186,11 +195,11 @@ public class LoginFragment extends Fragment {
 
                     Fragment fragment = new HomeFragment();
                     FragmentManager fragmentManager = getFragmentManager();
-                    fragmentManager.popBackStack();
-                    /*fragmentManager.beginTransaction()
+                    //fragmentManager.popBackStack();
+                    fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
-                            .addToBackStack("tag")
-                            .commit();*/
+                            //.addToBackStack("tag")
+                            .commit();
                 }
                 tpg.dismiss();
             }
@@ -203,6 +212,28 @@ public class LoginFragment extends Fragment {
                 tpg.dismiss();
             }
         });
+    }
+
+    public Boolean ValidateFields() {
+        Boolean result = false;
+
+        if (userNameEditText.getText().toString().trim().length() == 0) {
+            userNameEditText.requestFocus();
+            userNameEditText.setError(
+                    "User Name Is Required"
+            );
+            result = false;
+        } else if (userPwdEditText.getText().toString().trim().length() == 0) {
+            userPwdEditText.requestFocus();
+            userPwdEditText.setError(
+                    "Password Is Required"
+            );
+            result = false;
+        }
+        else {
+            result = true;
+        }
+        return result;
     }
 
 }

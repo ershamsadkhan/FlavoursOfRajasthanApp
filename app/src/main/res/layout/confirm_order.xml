@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
                 android:text="Name: "
-                android:textSize="15dp"
+                android:textSize="17dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -35,8 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:text="Shamsad"
-                android:textSize="15dp" />
+                android:text="-"
+                android:textSize="17dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
                 android:text="Email: "
-                android:textSize="15dp"
+                android:textSize="17dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -59,8 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:text="shammyk123@gmail.com"
-                android:textSize="15dp" />
+                android:text="-"
+                android:textSize="17dp" />
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -79,7 +79,7 @@
                 android:hint="Delivery Address"
                 android:lines="3"
                 android:minLines="3"
-                android:textSize="15dp" />
+                android:textSize="17dp" />
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
                 android:text="City"
-                android:textSize="15dp"
+                android:textSize="17dp"
                 android:textStyle="bold" />
 
             <Spinner
@@ -236,6 +236,28 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:text="Delivery Options: "
+                android:textSize="17dp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Currently we are offering only Cash On Delivery."
+                android:textSize="15dp"
+                android:textColor="@android:color/holo_green_dark"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

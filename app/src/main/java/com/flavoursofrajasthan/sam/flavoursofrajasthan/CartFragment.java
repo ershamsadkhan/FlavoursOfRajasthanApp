@@ -88,6 +88,11 @@ public class CartFragment extends Fragment {
             floatingActionButton.hide();
         }
 
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("CART");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         txtStorage = new TextStorage(getActivity());
         gson = new Gson();
 
@@ -138,8 +143,8 @@ public class CartFragment extends Fragment {
             Fragment fragment = new HomeFragment();
             FragmentManager fragmentManager = getFragmentManager();
 
-                fragmentManager.popBackStack();
-                fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
 
             return;
         } else {
@@ -147,8 +152,8 @@ public class CartFragment extends Fragment {
             if(orderDto.OrderLineItemList.size()<1){
                 FragmentManager fragmentManager = getFragmentManager();
 
-                    fragmentManager.popBackStack();
-                    fragmentManager.popBackStack();
+                    //fragmentManager.popBackStack();
+                    //fragmentManager.popBackStack();
 
                 return;
             }

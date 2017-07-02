@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="56dp"
+        android:paddingTop="40dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:backgroundTint="#80FFFFFF"
@@ -26,7 +26,8 @@
             <EditText android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="User Name" />
+                android:hint="User Name"
+                android:ems="10"/>
         </android.support.design.widget.TextInputLayout>
 
         <!-- Phone Label -->
@@ -81,6 +82,20 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
                 android:hint="Password" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Confirm Password Label -->
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:id="@+id/showConfirmPwd"
+            android:theme="@style/RobotoEditTextStyle">
+            <EditText android:id="@+id/input_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Confirm Password" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton

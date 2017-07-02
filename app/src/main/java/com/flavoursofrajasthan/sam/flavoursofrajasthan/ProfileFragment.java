@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
@@ -52,10 +53,12 @@ public class ProfileFragment extends Fragment {
     Button logoutBtn;
     EditText userNameEditText;
     EditText userPwdEditText;
+    EditText userConfirmPwdEditText;
     EditText primaryAddressEditText;
     EditText emailAddressEditText;
     EditText phoneNumberEditText;
     TextInputLayout txtInputLayout;
+    TextInputLayout txtConfirmInputLayout;
 
     TextStorage txtStorage;
     UserDto userDto;
@@ -64,6 +67,7 @@ public class ProfileFragment extends Fragment {
     CustomToast customToast;
 
     TransaparentDialogue tpg;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,11 +86,16 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
 
-        tpg=new TransaparentDialogue(getActivity());
+        tpg = new TransaparentDialogue(getActivity());
         FloatingActionButton floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
             floatingActionButton.hide();
         }
+
+        TextView title = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        title.setText("PROFILE");
+        title.setTypeface(null);
+        title.setTextSize(20);
 
         alert = new Alert(getActivity());
         txtStorage = new TextStorage(getActivity());
@@ -95,10 +104,12 @@ public class ProfileFragment extends Fragment {
         saveBtn = (Button) getActivity().findViewById(R.id.btn_save);
         registerBtn = (Button) getActivity().findViewById(R.id.btn_register);
         logoutBtn = (Button) getActivity().findViewById(R.id.btn_logout);
-        txtInputLayout=(TextInputLayout)getActivity().findViewById(R.id.showPwd);
+        txtInputLayout = (TextInputLayout) getActivity().findViewById(R.id.showPwd);
+        txtConfirmInputLayout = (TextInputLayout) getActivity().findViewById(R.id.showConfirmPwd);
 
         userNameEditText = (EditText) getActivity().findViewById((R.id.input_name));
         userPwdEditText = (EditText) getActivity().findViewById((R.id.input_password));
+        userConfirmPwdEditText = (EditText) getActivity().findViewById((R.id.input_confirm_password));
         primaryAddressEditText = (EditText) getActivity().findViewById((R.id.input_primary_address));
         emailAddressEditText = (EditText) getActivity().findViewById((R.id.input_email));
         phoneNumberEditText = (EditText) getActivity().findViewById((R.id.input_phone));
@@ -120,6 +131,7 @@ public class ProfileFragment extends Fragment {
             logoutBtn.setVisibility(View.VISIBLE);
             userPwdEditText.setVisibility(View.GONE);
             txtInputLayout.setVisibility(View.GONE);
+            txtConfirmInputLayout.setVisibility(View.GONE);
             disableFields();
             LogInUser();
         } else {
@@ -136,7 +148,9 @@ public class ProfileFragment extends Fragment {
                 userDto.PrimaryAddress = primaryAddressEditText.getText().toString();
                 userDto.UserEmailAddress = emailAddressEditText.getText().toString();
                 userDto.UserPhoneNumber = phoneNumberEditText.getText().toString();
-                SignUpUser();
+                if (ValidateFields()) {
+                    SignUpUser();
+                }
             }
         });
 
@@ -149,6 +163,7 @@ public class ProfileFragment extends Fragment {
                 txtStorage.storeUserName("");
                 Fragment fragment = new LoginFragment();
                 FragmentManager fragmentManager = getFragmentManager();
+                //fragmentManager.popBackStack();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .commit();
@@ -163,8 +178,10 @@ public class ProfileFragment extends Fragment {
                 userDto.PrimaryAddress = primaryAddressEditText.getText().toString();
                 userDto.UserEmailAddress = emailAddressEditText.getText().toString();
                 userDto.UserPhoneNumber = phoneNumberEditText.getText().toString();
-                apiRequest.Obj=userDto;
-                UpdateUser();
+                apiRequest.Obj = userDto;
+                if (ValidateFields()) {
+                    UpdateUser();
+                }
             }
         });
 
@@ -185,7 +202,7 @@ public class ProfileFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.edit) {
-            if(saveBtn.getVisibility()==View.GONE) {
+            if (saveBtn.getVisibility() == View.GONE) {
                 enableFields();
                 saveBtn.setVisibility(View.GONE);
                 registerBtn.setVisibility(View.VISIBLE);
@@ -296,7 +313,7 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    public void enableFields(){
+    public void enableFields() {
         userNameEditText.setEnabled(false);
         userPwdEditText.setEnabled(true);
         primaryAddressEditText.setEnabled(true);
@@ -304,11 +321,80 @@ public class ProfileFragment extends Fragment {
         phoneNumberEditText.setEnabled(true);
     }
 
-    public void disableFields(){
+    public void disableFields() {
         userNameEditText.setEnabled(false);
         userPwdEditText.setEnabled(false);
         primaryAddressEditText.setEnabled(false);
         emailAddressEditText.setEnabled(false);
         phoneNumberEditText.setEnabled(false);
+    }
+
+    public Boolean ValidateFields() {
+        Boolean result = false;
+        String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
+        if (userNameEditText.getText().toString().trim().length() == 0) {
+            userNameEditText.requestFocus();
+            userNameEditText.setError(
+                    "UserName Is Required"
+            );
+            result = false;
+        } else if (phoneNumberEditText.getText().toString().trim().length() == 0) {
+            phoneNumberEditText.requestFocus();
+            phoneNumberEditText.setError(
+                    "Phone No Is Required"
+            );
+            result = false;
+        }
+        else if (phoneNumberEditText.getText().toString().trim().length() <10) {
+            phoneNumberEditText.requestFocus();
+            phoneNumberEditText.setError(
+                    "Invalid Phone Number"
+            );
+            result = false;
+        }
+        else if (emailAddressEditText.getText().toString().trim().length() == 0) {
+            emailAddressEditText.requestFocus();
+            emailAddressEditText.setError(
+                    "Email Id Is Required"
+            );
+            result = false;
+        }
+        else if (!emailAddressEditText.getText().toString().trim().matches(emailPattern)) {
+            emailAddressEditText.requestFocus();
+            emailAddressEditText.setError(
+                    "Invalid Email Id"
+            );
+            result = false;
+        }else if (primaryAddressEditText.getText().toString().trim().length() == 0) {
+            primaryAddressEditText.requestFocus();
+            primaryAddressEditText.setError(
+                    "Address Is Required"
+            );
+            result = false;
+        } else if (userPwdEditText.getVisibility()==View.VISIBLE && userPwdEditText.getText().toString().trim().length() == 0) {
+            userPwdEditText.requestFocus();
+            userPwdEditText.setError(
+                    "Password Is Required"
+            );
+            result = false;
+        }
+        else if (userPwdEditText.getVisibility()==View.VISIBLE && userPwdEditText.getText().toString().trim().length() <6) {
+            userPwdEditText.requestFocus();
+            userPwdEditText.setError(
+                    "Alteast 6 Characters Is Required"
+            );
+            result = false;
+        }
+        else if (userPwdEditText.getVisibility()==View.VISIBLE && !userPwdEditText.getText().toString().equals(userConfirmPwdEditText.getText().toString().trim())) {
+            userConfirmPwdEditText.requestFocus();
+            userConfirmPwdEditText.setError(
+                    "Please check your password!"
+            );
+            result = false;
+        }else {
+            result = true;
+        }
+        return result;
     }
 }

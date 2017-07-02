@@ -79,7 +79,11 @@ public class OrderFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Menu 1");
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("ORDER");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         txtStorage = new TextStorage(getActivity());
         alert = new Alert(getActivity());
         gson = new Gson();
@@ -151,7 +155,7 @@ public class OrderFragment extends Fragment {
                 FragmentManager fragmentManager = getFragmentManager();
                 int count = fragmentManager.getBackStackEntryCount();
                 if(count>0) {
-                    fragmentManager.popBackStack();
+                    //fragmentManager.popBackStack();
                 }
             }
 

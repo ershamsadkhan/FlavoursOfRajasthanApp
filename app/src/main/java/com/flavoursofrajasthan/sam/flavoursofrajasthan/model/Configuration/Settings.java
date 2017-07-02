@@ -6,4 +6,5 @@ package com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration;
 
 public class Settings {
     public static  String BaseApiUrl="http://sample.jitangupta.com/";
+    public static String fontPath = "fonts/pristina.ttf";
 }

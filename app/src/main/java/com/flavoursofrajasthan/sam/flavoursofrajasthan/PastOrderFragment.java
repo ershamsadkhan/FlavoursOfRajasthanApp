@@ -113,6 +113,11 @@ public class PastOrderFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
+        TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
+        title.setText("PAST ORDERS");
+        title.setTypeface(null);
+        title.setTextSize(20);
+
         try {
             alert = new Alert(getActivity());
             txtStorage = new TextStorage(getActivity());
@@ -273,7 +278,12 @@ public class PastOrderFragment extends Fragment {
                     } else {
                         alert.alertMessage(response.body().ErrMsg);
                         FragmentManager fragmentManager = getFragmentManager();
-                        fragmentManager.popBackStack();
+                        //fragmentManager.popBackStack();
+                        Fragment fragment = new HomeFragment();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.flContent, fragment)
+                                //.addToBackStack(null)
+                                .commit();
                     }
                 } else {
                     alert.alertMessage("" + "server error");
