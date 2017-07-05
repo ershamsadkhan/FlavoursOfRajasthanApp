@@ -13,10 +13,17 @@ import java.io.StreamCorruptedException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+
+import static android.content.ContentValues.TAG;
 
 public class ImageCache {
     private static ImageCache INSTANCE = null;
@@ -27,6 +34,7 @@ public class ImageCache {
 
     @SuppressWarnings("unchecked")
     private ImageCache() {
+
         cacheMap = new HashMap<String, String>();
         bitmapMap = new HashMap<String, Bitmap>();
         File fullCacheDir = new File(Environment.getExternalStorageDirectory().toString(),cacheDir);
@@ -120,4 +128,5 @@ public class ImageCache {
         bitmapMap.put(cacheUri, bm);
         return bm;
     }
+
 }

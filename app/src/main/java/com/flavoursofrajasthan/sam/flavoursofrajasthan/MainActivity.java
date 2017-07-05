@@ -1,8 +1,12 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -25,6 +30,8 @@ import android.widget.LinearLayout;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
 import com.google.gson.Gson;
+
+import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -84,6 +91,10 @@ public class MainActivity extends AppCompatActivity
         tx.replace(R.id.flContent, new HomeFragment());
         //tx.addToBackStack("tag");
         tx.commit();
+
+        if(isStoragePermissionGranted()){
+
+        }
     }
 
     @Override
@@ -94,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+        //alert.alertMessage("Back buuton pressed");
     }
 
 
@@ -110,20 +122,26 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         int count = fragmentManager.getBackStackEntryCount();
-        if (count > 0) {
-            fragmentManager.popBackStack();
-        }
+
 
         if (id == R.id.nav_home) {
+
             if (fab != null) {
                 fab.show();
+            }
+            if (count > 0) {
+                fragmentManager.popBackStack();
             }
             fragment = new HomeFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
+                    .addToBackStack(HomeFragment.class.getName())
                     .commit();
         } else if (id == R.id.nav_profile) {
             fragment = new LoginFragment();
+            if (count > 0) {
+                fragmentManager.popBackStack();
+            }
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
                     .addToBackStack(LoginFragment.class.getName())
@@ -141,6 +159,9 @@ public class MainActivity extends AppCompatActivity
                     fab.show();
                 }
                 fragment = new PastOrderFragment();
+                if (count > 0) {
+                    fragmentManager.popBackStack();
+                }
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .addToBackStack(PastOrderFragment.class.getName())
@@ -160,6 +181,9 @@ public class MainActivity extends AppCompatActivity
                     fab.show();
                 }
                 fragment = new TrackOrderFragment();
+                if (count > 0) {
+                    fragmentManager.popBackStack();
+                }
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .addToBackStack(TrackOrderFragment.class.getName())
@@ -170,6 +194,9 @@ public class MainActivity extends AppCompatActivity
                 fab.show();
             }
             fragment = new OffersFragment();
+            if (count > 0) {
+                fragmentManager.popBackStack();
+            }
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
                     .addToBackStack(OffersFragment.class.getName())
@@ -207,6 +234,15 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Log.v("Flavours of Rajasthan","Permission: "+permissions[0]+ "was "+grantResults[0]);
+            //resume tasks needing this permission
+        }
+    }
+
     public void RateUs(){
         Uri uri = Uri.parse("market://details?id=" + this.getPackageName());
         Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -234,6 +270,25 @@ public class MainActivity extends AppCompatActivity
             startActivity(Intent.createChooser(i, "choose one"));
         } catch(Exception e) {
             e.toString();
+        }
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
         }
     }
 }

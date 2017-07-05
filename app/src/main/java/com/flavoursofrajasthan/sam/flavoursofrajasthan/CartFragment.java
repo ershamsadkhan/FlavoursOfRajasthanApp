@@ -109,6 +109,7 @@ public class CartFragment extends Fragment {
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
+                            .addToBackStack("tag")
                             .commit();
                 }
                 else{
@@ -142,7 +143,9 @@ public class CartFragment extends Fragment {
             //alert.alertMessage("No Items present in the cart");
             Fragment fragment = new HomeFragment();
             FragmentManager fragmentManager = getFragmentManager();
-
+            fragmentManager.beginTransaction()
+                    .replace(R.id.flContent, fragment)
+                    .commit();
                 //fragmentManager.popBackStack();
                 //fragmentManager.popBackStack();
 
@@ -150,7 +153,11 @@ public class CartFragment extends Fragment {
         } else {
             orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
             if(orderDto.OrderLineItemList.size()<1){
+                Fragment fragment = new HomeFragment();
                 FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
 
                     //fragmentManager.popBackStack();
                     //fragmentManager.popBackStack();

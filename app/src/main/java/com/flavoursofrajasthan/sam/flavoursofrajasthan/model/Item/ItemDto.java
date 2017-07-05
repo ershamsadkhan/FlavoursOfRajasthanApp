@@ -1,5 +1,6 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -89,7 +90,7 @@ public class ItemDto  {
                 image = ret;
                 if (sta != null) {
                     // WHEN IMAGE IS LOADED NOTIFY THE ADAPTER
-                    imageCache.saveCacheFile(ImageUrl,image);
+                        imageCache.saveCacheFile(ImageUrl, image);
                     sta.notifyDataSetChanged();
                 }
             } else {

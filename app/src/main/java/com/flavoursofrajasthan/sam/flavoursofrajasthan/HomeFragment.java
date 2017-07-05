@@ -1,10 +1,14 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Movie;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -42,6 +46,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by SAM on 6/4/2017.
@@ -101,7 +107,7 @@ public class HomeFragment extends Fragment {
 
         tpg = new TransaparentDialogue(getActivity());
         fragmentManager = getActivity().getSupportFragmentManager();
-        
+
         listView = (ListView) getView().findViewById(R.id.items_list);
         btnItemClick = (Button) getView().findViewById(R.id.btn_item_selected);
 
@@ -221,5 +227,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+
 
 }
