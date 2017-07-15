@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -222,11 +223,21 @@ public class ConfirmOrderFragment extends Fragment {
                     alert.alertMessage(response.body().ErrMsg);
                 } else {
                     alert.alertMessage("Order Placed Successfully");
+                    int count =0;
                     Fragment fragment = new TrackOrderFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                    count=fragmentManager.getBackStackEntryCount();
+                    if(count>2) {
+                        fragmentManager.popBackStack(CartFragment.class.getName(),0);
+                        //fragmentManager.popBackStack();
+
+                    }else if(count>1){
+                        fragmentManager.popBackStackImmediate();
+                    }
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
                             .commit();
+
                     txtStorage.storeCartData("");
                 }
                 tpg.dismiss();

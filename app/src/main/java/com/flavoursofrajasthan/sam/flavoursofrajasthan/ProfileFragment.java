@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -162,7 +163,7 @@ public class ProfileFragment extends Fragment {
                 txtStorage.storeUserPwd("");
                 txtStorage.storeUserName("");
                 Fragment fragment = new LoginFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 //fragmentManager.popBackStack();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
@@ -295,7 +296,7 @@ public class ProfileFragment extends Fragment {
                 } else {
                     customToast.show("Successfully Signed Up.");
                     Fragment fragment = new LoginFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
                             .commit();

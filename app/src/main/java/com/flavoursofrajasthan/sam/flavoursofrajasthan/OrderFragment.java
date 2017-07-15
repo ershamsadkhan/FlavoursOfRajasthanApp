@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -71,6 +72,9 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
         //change R.layout.yourlayoutfilename for each of your fragments
+        if (container != null) {
+            container.removeAllViews();
+        }
         return inflater.inflate(R.layout.order_main, container, false);
     }
 
@@ -152,7 +156,7 @@ public class OrderFragment extends Fragment {
                 itemDtoForOrder = (ItemDtoForOrder) getArguments().getSerializable("ItemDto");
                 laySave.setVisibility(View.GONE);
             } else {
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 int count = fragmentManager.getBackStackEntryCount();
                 if(count>0) {
                     //fragmentManager.popBackStack();
@@ -196,22 +200,28 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AddToCart();
-                Fragment fragment = new HomeFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.flContent, fragment)
-                        .commit();
+                //Fragment fragment = new HomeFragment();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                //fragmentManager.popBackStack("GotoHome",FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                //Fragment fragment = fragmentManager.findFragmentByTag("GotoHome");
+
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, new HomeFragment()).commit();
+
             }
         });
 
         btnCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 AddToCart();
                 Fragment fragment = new CartFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
+                        .setAllowOptimization(true)
+                        //.addToBackStack(CartFragment.class.getName())
                         .commit();
             }
         });
@@ -221,9 +231,10 @@ public class OrderFragment extends Fragment {
             public void onClick(View v) {
                 SaveEditItem();
                 Fragment fragment = new CartFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
+                        .addToBackStack(null)
                         .commit();
             }
         });

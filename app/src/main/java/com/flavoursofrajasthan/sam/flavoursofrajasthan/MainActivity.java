@@ -57,25 +57,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = ((AppCompatActivity)this).getSupportFragmentManager();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String tempOrderDto = txtStorage.getCartData();
-                if (tempOrderDto == "") {
-                    alert.alertMessage("No Items present in the cart");
-                }
-                else {
-                    fragment = new CartFragment();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.flContent, fragment)
-                            .addToBackStack("tag")
-                            .commit();
-                }
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,10 +72,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.flContent, new HomeFragment());
-        //tx.addToBackStack("tag");
-        tx.commit();
+        fragmentManager.beginTransaction()
+        .replace(R.id.flContent, new HomeFragment())
+        //tx.addToBackStack(null);
+        .commit();
 
         if(isStoragePermissionGranted()){
 
@@ -130,21 +115,21 @@ public class MainActivity extends AppCompatActivity
                 fab.show();
             }
             if (count > 0) {
-                fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
             }
             fragment = new HomeFragment();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
-                    .addToBackStack(HomeFragment.class.getName())
+                    //.addToBackStack(null)
                     .commit();
         } else if (id == R.id.nav_profile) {
             fragment = new LoginFragment();
             if (count > 0) {
-                fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
             }
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
-                    .addToBackStack(LoginFragment.class.getName())
+                    .addToBackStack(null)
                     .commit();
         } else if (id == R.id.nav_pastorder) {
             userId=txtStorage.getUserName();
@@ -152,7 +137,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LoginFragment();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
-                        .addToBackStack(LoginFragment.class.getName())
+                        .addToBackStack(null)
                         .commit();
             }else {
                 if (fab != null) {
@@ -160,11 +145,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 fragment = new PastOrderFragment();
                 if (count > 0) {
-                    fragmentManager.popBackStack();
+                    //fragmentManager.popBackStack();
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
-                        .addToBackStack(PastOrderFragment.class.getName())
+                        .addToBackStack(null)
                         .commit();
             }
         } else if (id == R.id.nav_trackorder) {
@@ -173,7 +158,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LoginFragment();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
-                        .addToBackStack(LoginFragment.class.getName())
+                        .addToBackStack(null)
                         .commit();
             }
             else {
@@ -182,11 +167,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 fragment = new TrackOrderFragment();
                 if (count > 0) {
-                    fragmentManager.popBackStack();
+                    //fragmentManager.popBackStack();
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
-                        .addToBackStack(TrackOrderFragment.class.getName())
+                        .addToBackStack(null)
                         .commit();
             }
         }else if (id == R.id.nav_notifications) {
@@ -195,11 +180,11 @@ public class MainActivity extends AppCompatActivity
             }
             fragment = new OffersFragment();
             if (count > 0) {
-                fragmentManager.popBackStack();
+                //fragmentManager.popBackStack();
             }
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
-                    .addToBackStack(OffersFragment.class.getName())
+                    .addToBackStack(null)
                     .commit();
         }
         else if (id == R.id.nav_rateus) {
@@ -214,7 +199,7 @@ public class MainActivity extends AppCompatActivity
             //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
-                    .addToBackStack("tag")
+                    .addToBackStack(null)
                     .commit();
         }
         else if (id == R.id.nav_help) {
@@ -222,7 +207,7 @@ public class MainActivity extends AppCompatActivity
             //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
-                    .addToBackStack("tag")
+                    .addToBackStack(null)
                     .commit();
         }
 

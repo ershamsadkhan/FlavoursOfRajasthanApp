@@ -1,7 +1,6 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter;
 
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -130,7 +129,9 @@ public class CustomListAdapter extends BaseAdapter {
             //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent,fragment)
-                    .addToBackStack( "tag" ).commit();
+                    .addToBackStack("GotoHome")
+                    .commit();
+            fragmentManager.executePendingTransactions();
 
 
         }

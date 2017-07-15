@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.Alert;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.CustomProgress;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.Alert.TransaparentDialogue;
+import com.flavoursofrajasthan.sam.flavoursofrajasthan.LocalStorage.TextStorage;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.adapter.CustomListAdapter;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Configuration.Settings;
 import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.Item.CategoryDto;
@@ -67,6 +68,8 @@ public class HomeFragment extends Fragment {
     FragmentManager fragmentManager;
     ListView listView;
     int retry = 0;
+
+    TextStorage txtStorage;
 
     TransaparentDialogue tpg;
 
@@ -106,19 +109,36 @@ public class HomeFragment extends Fragment {
         //getActivity().setTitle("Menu 1");
 
         tpg = new TransaparentDialogue(getActivity());
-        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
 
         listView = (ListView) getView().findViewById(R.id.items_list);
         btnItemClick = (Button) getView().findViewById(R.id.btn_item_selected);
 
         alert = new Alert(getActivity());
+        txtStorage = new TextStorage(getActivity());
         customProgress = new CustomProgress(mActivity, mActivity, getLayoutInflater(savedInstanceState));
 
         floatingActionButton = ((MainActivity) getActivity()).getFloatingActionButton();
         if (floatingActionButton != null) {
             floatingActionButton.show();
         }
-
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String tempOrderDto = txtStorage.getCartData();
+                if (tempOrderDto == "") {
+                    alert.alertMessage("No Items present in the cart");
+                }
+                else {
+                    Fragment fragment = new CartFragment();
+                    FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.flContent, fragment)
+                            .addToBackStack(CartFragment.class.getName())
+                            .commit();
+                }
+            }
+        });
 
         Typeface m_typeFace = Typeface.createFromAsset(getActivity().getAssets(), Settings.fontPath);
         TextView title = (TextView) getActivity().findViewById(R.id.toolbar_title);

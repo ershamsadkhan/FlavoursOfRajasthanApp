@@ -1,5 +1,6 @@
 package com.flavoursofrajasthan.sam.flavoursofrajasthan;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Movie;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -109,7 +111,7 @@ public class LoginFragment extends Fragment {
 
         if (userDto.Userid > 0 && userDto.UserName != "" && userDto.UserPwd != "") {
             Fragment fragment = new ProfileFragment();
-            FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
             //fragmentManager.popBackStackImmediate();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
@@ -134,20 +136,44 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-            }
-        });
+                        final Dialog dialog = new Dialog(getActivity());
+                        dialog.setContentView(R.layout.password_reset_dialog);
+                        // set the custom dialog components - text, image and button
+
+                        Button dialogButton = (Button) dialog.findViewById(R.id.btn_usernamesubmit);
+                        // if button is clicked, close the custom dialog
+                        dialogButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EditText userNameForgotEditText= (EditText) dialog.findViewById((R.id.input_username));
+                                if (userNameForgotEditText.getText().toString().trim().length() == 0) {
+                                    userNameForgotEditText.requestFocus();
+                                    userNameForgotEditText.setError(
+                                            "User Name Is Required"
+                                    );
+                                    return;
+                                }
+                                SendForgotPassword(userNameForgotEditText.getText().toString());
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+
+                    }
+                });
 
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment fragment = new ProfileFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 //fragmentManager.popBackStackImmediate();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .commit();
             }
-        });
+        } );
 
     }
 
@@ -234,6 +260,34 @@ public class LoginFragment extends Fragment {
             result = true;
         }
         return result;
+    }
+
+    public void SendForgotPassword(String UserName) {
+        tpg.show();
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<ApiResponse<UserDto>> call = apiService.ForgorPassword(UserName);
+        call.enqueue(new Callback<ApiResponse<UserDto>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<UserDto>> call, Response<ApiResponse<UserDto>> response) {
+                //int statusCode = response.code();
+                if (response.body().Status == false) {
+                    alert.alertMessage(response.body().ErrMsg);
+                } else {
+                    alert.alertMessage(response.body().ErrMsg);
+                }
+                tpg.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<UserDto>> call, Throwable t) {
+                // Log error here since request failed
+                alert.alertMessage("" + getString(R.string.server_error));
+                Log.e("Api Failure", t.toString());
+                tpg.dismiss();
+            }
+        });
     }
 
 }

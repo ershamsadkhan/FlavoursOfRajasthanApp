@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -277,7 +278,7 @@ public class PastOrderFragment extends Fragment {
 
                     } else {
                         alert.alertMessage(response.body().ErrMsg);
-                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                         //fragmentManager.popBackStack();
                         Fragment fragment = new HomeFragment();
                         fragmentManager.beginTransaction()
@@ -315,7 +316,7 @@ public class PastOrderFragment extends Fragment {
                     if (response.body().Status == true) {
 
                         Fragment fragment = new TrackOrderFragment();
-                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                         fragmentManager.beginTransaction()
                                 .replace(R.id.flContent, fragment)
                                 .commit();

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -109,7 +110,7 @@ public class CartFragment extends Fragment {
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
-                            .addToBackStack("tag")
+                            .addToBackStack(null)
                             .commit();
                 }
                 else{
@@ -117,6 +118,7 @@ public class CartFragment extends Fragment {
                     FragmentManager fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
+                            .addToBackStack(null)
                             .commit();
                 }
             }
@@ -142,9 +144,10 @@ public class CartFragment extends Fragment {
         if (tempOrderDto == "") {
             //alert.alertMessage("No Items present in the cart");
             Fragment fragment = new HomeFragment();
-            FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.flContent, fragment)
+                    .addToBackStack(null)
                     .commit();
                 //fragmentManager.popBackStack();
                 //fragmentManager.popBackStack();
@@ -154,9 +157,10 @@ public class CartFragment extends Fragment {
             orderDto = gson.fromJson(tempOrderDto, OrderDto.class);
             if(orderDto.OrderLineItemList.size()<1){
                 Fragment fragment = new HomeFragment();
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .replace(R.id.flContent, fragment)
+                        .addToBackStack(null)
                         .commit();
 
                     //fragmentManager.popBackStack();
@@ -193,10 +197,10 @@ public class CartFragment extends Fragment {
                     txtStorage.storeEditItemId(""+v.getId());
 
                     Fragment fragment = new OrderFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
-                            .addToBackStack("tag")
+                            //.addToBackStack(null)
                             .commit();
 
                 }
@@ -210,9 +214,10 @@ public class CartFragment extends Fragment {
                     removeItem(v.getId());
 
                     Fragment fragment = new CartFragment();
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.flContent, fragment)
+                            //.addToBackStack(null)
                             .commit();
 
                 }

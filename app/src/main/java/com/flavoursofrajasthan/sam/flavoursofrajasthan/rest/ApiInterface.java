@@ -11,6 +11,7 @@ import com.flavoursofrajasthan.sam.flavoursofrajasthan.model.User.UserDto;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 
 public interface ApiInterface {
@@ -29,7 +30,7 @@ public interface ApiInterface {
     @POST("api/User/SignUp")
     Call<ApiResponse<UserDto>> signUp(@Body ApiRequest<UserDto> request);
 
-    @POST("api/User/LogIn")
+    @POST("api/User/LogInForUsers")
     Call<ApiResponse<UserDto>> logIn(@Body ApiRequest<UserDto> request);
 
     @POST("api/User/UpdateDetails")
@@ -40,5 +41,8 @@ public interface ApiInterface {
 
     @POST("api/Offer/Applicableoffers")
     Call<ApiResponse<OfferDto>> ApplicableOffers(@Body ApiRequest<OfferDto> request);
+
+    @POST("api/User/ForgotPassword")
+    Call<ApiResponse<UserDto>> ForgorPassword(@Query("UserName") String UserName);
 
 }
