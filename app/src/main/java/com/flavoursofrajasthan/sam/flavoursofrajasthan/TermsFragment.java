@@ -34,7 +34,7 @@ public class TermsFragment extends Fragment {
         }
 
         TextView title=(TextView)getActivity().findViewById(R.id.toolbar_title);
-        title.setText("TERSM AND CONDITIONS");
+        title.setText("TERMS AND CONDITIONS");
         title.setTypeface(null);
         title.setTextSize(20);
     }

@@ -103,35 +103,13 @@
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"
                     android:paddingTop="3dp"
-                    android:weightSum="3">
+                    android:weightSum="2">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
 
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/Rs"
-                            android:textSize="15dp" />
-
-                        <TextView
-                            android:id="@+id/txt_quaterPrice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="60"
-                            android:textSize="18dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
@@ -152,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
+
                         android:orientation="horizontal">
 
                         <TextView
@@ -182,16 +160,10 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="3">
+                        android:weightSum="2"
+                        >
 
-                        <RadioButton
-                            android:id="@+id/radioQuaterPrice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:checked="false"
-                            android:text="Quater Plate"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
 
                         <RadioButton
                             android:id="@+id/radioHalfPrice"
@@ -199,7 +171,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="false"
-                            android:text="Half Plate" />
+                            android:text="Half Plate"
+                            android:layout_gravity="center"
+                            />
 
                         <RadioButton
                             android:id="@+id/radioFullPrice"
@@ -207,7 +181,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:checked="true"
-                            android:text="Full Plate" />
+                            android:text="Full Plate"
+                            android:layout_gravity="center"/>
                     </RadioGroup>
 
                 </LinearLayout>

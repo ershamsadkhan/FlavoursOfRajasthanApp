@@ -41,7 +41,7 @@ public class OrderFragment extends Fragment {
     ImageView itemImage;
     TextView itemHeader;
     TextView itemDescription;
-    TextView quarterPrice;
+    //TextView quarterPrice;
     TextView halfPrice;
     TextView fullPrice;
     Button btnAddToCart;
@@ -50,7 +50,7 @@ public class OrderFragment extends Fragment {
     LinearLayout layAddToCart;
     LinearLayout laySave;
     private RadioGroup radioGroup;
-    private RadioButton radioButtonQuarterPrice;
+    //private RadioButton radioButtonQuarterPrice;
     private RadioButton radioButtonHalfPrice;
     private RadioButton radioButtonFullPrice;
     Spinner stySpinner;
@@ -95,7 +95,7 @@ public class OrderFragment extends Fragment {
         itemImage = (ImageView) getActivity().findViewById(R.id.thumbImage);
         itemHeader = (TextView) getActivity().findViewById(R.id.txt_header);
         itemDescription = (TextView) getActivity().findViewById(R.id.txt_description);
-        quarterPrice = (TextView) getActivity().findViewById(R.id.txt_quaterPrice);
+        //quarterPrice = (TextView) getActivity().findViewById(R.id.txt_quaterPrice);
         halfPrice = (TextView) getActivity().findViewById(R.id.txt_halfPrice);
         fullPrice = (TextView) getActivity().findViewById(R.id.txt_fullPrice);
         txtTotal = (TextView) getActivity().findViewById(R.id.txt_total);
@@ -105,7 +105,7 @@ public class OrderFragment extends Fragment {
         layAddToCart=(LinearLayout)getActivity().findViewById(R.id.layAddTOCart);
         laySave=(LinearLayout)getActivity().findViewById(R.id.laySave);
         radioGroup = (RadioGroup) getActivity().findViewById(R.id.radioGroup);
-        radioButtonQuarterPrice = (RadioButton) getActivity().findViewById(R.id.radioQuaterPrice);
+        //radioButtonQuarterPrice = (RadioButton) getActivity().findViewById(R.id.radioQuaterPrice);
         radioButtonHalfPrice = (RadioButton) getActivity().findViewById(R.id.radioHalfPrice);
         radioButtonFullPrice = (RadioButton) getActivity().findViewById(R.id.radioFullPrice);
         stySpinner = (Spinner) getActivity().findViewById(R.id.spinner1);
@@ -113,10 +113,10 @@ public class OrderFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId) {
-                    case R.id.radioQuaterPrice:
+                    /*case R.id.radioQuaterPrice:
                         orderLineItemDto.PriceType = 1;
                         orderLineItemDto.Price = Integer.parseInt(quarterPrice.getText().toString());
-                        break;
+                        break;*/
                     case R.id.radioHalfPrice:
                         orderLineItemDto.PriceType = 2;
                         orderLineItemDto.Price = Integer.parseInt(halfPrice.getText().toString());
@@ -186,7 +186,7 @@ public class OrderFragment extends Fragment {
         }
         itemHeader.setText(itemDtoForOrder.ItemHeader);
         itemDescription.setText(itemDtoForOrder.ItemDescription);
-        quarterPrice.setText(Long.toString(itemDtoForOrder.QuaterPrice));
+        //quarterPrice.setText(Long.toString(itemDtoForOrder.QuaterPrice));
         halfPrice.setText(Long.toString(itemDtoForOrder.HalfPrice));
         fullPrice.setText(Long.toString(itemDtoForOrder.FullPrice));
         orderLineItemDto.Price = Integer.parseInt(fullPrice.getText().toString());
@@ -338,7 +338,7 @@ public class OrderFragment extends Fragment {
             itemDtoForOrder.Categoryid = lineItemDto.item.Categoryid;
             itemDtoForOrder.FullPrice = lineItemDto.item.FullPrice;
             itemDtoForOrder.HalfPrice = lineItemDto.item.HalfPrice;
-            itemDtoForOrder.QuaterPrice = lineItemDto.item.QuaterPrice;
+            //itemDtoForOrder.QuaterPrice = lineItemDto.item.QuaterPrice;
             itemDtoForOrder.ImageUrl = lineItemDto.ImageUrl;
 
             orderLineItemDto = lineItemDto;
@@ -354,17 +354,17 @@ public class OrderFragment extends Fragment {
     public void RefreshUI(){
 
         if(orderLineItemDto.PriceType==1){
-            radioButtonQuarterPrice.setChecked(true);
+            //radioButtonQuarterPrice.setChecked(true);
             radioButtonHalfPrice.setChecked(false);
             radioButtonFullPrice.setChecked(false);
         }
         else if(orderLineItemDto.PriceType==2){
-            radioButtonQuarterPrice.setChecked(false);
+            //radioButtonQuarterPrice.setChecked(false);
             radioButtonHalfPrice.setChecked(true);
             radioButtonFullPrice.setChecked(false);
         }
         else if(orderLineItemDto.PriceType==3){
-            radioButtonQuarterPrice.setChecked(false);
+            //radioButtonQuarterPrice.setChecked(false);
             radioButtonHalfPrice.setChecked(false);
             radioButtonFullPrice.setChecked(true);
         }
